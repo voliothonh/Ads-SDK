@@ -3,6 +3,7 @@ package com.admob.ads.open
 import com.admob.AdType
 import com.admob.TAdCallback
 import com.admob.ads.AdsSDK
+import com.admob.ads.open.AdmobOpenResume.adUnitId
 import com.admob.getActivityOnTop
 import com.admob.logAdImpression
 import com.admob.trackingAdValue
@@ -19,7 +20,8 @@ object AdmobOpen {
     internal fun load(
         adUnitId: String,
         callback: TAdCallback? = null,
-        onAdLoaded: (appOpenAd: AppOpenAd) -> Unit = {}
+        onAdLoadFailure : () -> Unit = {},
+        onAdLoaded: (appOpenAd: AppOpenAd) -> Unit = {},
     ) {
         AppOpenAd.load(
             AdsSDK.app,
@@ -29,6 +31,7 @@ object AdmobOpen {
                 override fun onAdFailedToLoad(loadAdError: LoadAdError) {
                     AdsSDK.adCallback.onAdFailedToLoad(adUnitId, AdType.OpenApp, loadAdError)
                     callback?.onAdFailedToLoad(adUnitId, AdType.OpenApp, loadAdError)
+                    onAdLoadFailure.invoke()
                 }
 
                 override fun onAdLoaded(appOpenAd: AppOpenAd) {

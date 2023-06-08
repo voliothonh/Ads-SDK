@@ -15,15 +15,27 @@ object AdmobOpenResume {
 
     private var appOpenAd: AppOpenAd? = null
     private var isAppOpenAdShowing = false
+    private var isAppOpenAdLoading = false
 
     fun load(id: String, callback: TAdCallback? = null) {
         adUnitId = id
-        AdmobOpen.load(adUnitId, callback) { appOpenAd = it }
+        isAppOpenAdLoading = true
+        AdmobOpen.load(
+            adUnitId,
+            callback,
+            onAdLoadFailure = {
+                isAppOpenAdLoading = false
+
+            }, onAdLoaded = {
+                isAppOpenAdLoading = false
+                appOpenAd = it
+            }
+        )
     }
 
     internal fun onOpenAdAppResume() {
 
-        if (!AdsSDK.isEnableOpenAds){
+        if (!AdsSDK.isEnableOpenAds) {
             return
         }
 
@@ -35,7 +47,8 @@ object AdmobOpenResume {
             return
         }
 
-        if (appOpenAd == null) {
+        if (appOpenAd == null && !isAppOpenAdLoading) {
+            AdmobOpen.load(adUnitId)
             return
         }
 
@@ -70,6 +83,7 @@ object AdmobOpenResume {
                             super.onAdFailedToShowFullScreenContent(adUnit, adType)
                             isAppOpenAdShowing = false
                             AdmobOpenResume.appOpenAd = null
+                            isAppOpenAdLoading = false
                             if (dialog.isShowing) {
                                 dialog.dismiss()
                             }
@@ -82,6 +96,7 @@ object AdmobOpenResume {
                             super.onAdDismissedFullScreenContent(adUnit, adType)
                             isAppOpenAdShowing = false
                             AdmobOpenResume.appOpenAd = null
+                            isAppOpenAdLoading = false
                             if (dialog.isShowing) {
                                 dialog.dismiss()
                             }

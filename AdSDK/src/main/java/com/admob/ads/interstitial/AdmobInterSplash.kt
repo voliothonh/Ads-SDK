@@ -47,6 +47,12 @@ object AdmobInterSplash {
         timer?.cancel()
         timer = object : CountDownTimer(timeout, 1000) {
             override fun onTick(millisUntilFinished: Long) {
+
+                if (!AdsSDK.isEnableInter) {
+                    nextAction.invoke()
+                    return
+                }
+
                 if (AdmobInter.checkShowInterCondition(adUnitId, false)) {
                     timer?.cancel()
                     onNextActionWhenResume {
