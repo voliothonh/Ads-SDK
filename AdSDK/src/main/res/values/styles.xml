@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="DialogAppCompatTheme" parent="Theme.AppCompat.Light.DarkActionBar"/>
+
+    <style name="DialogAppOpenResumeAd" parent="@android:style/Theme.Material.Dialog">
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:statusBarColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="font_400_10">
+        <item name="android:textSize">@dimen/_10ssp</item>
+        <item name="android:fontFamily">@font/font_400</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="font_400_12">
+        <item name="android:textSize">@dimen/_12ssp</item>
+        <item name="android:fontFamily">@font/font_400</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="font_400_13">
+        <item name="android:textSize">@dimen/_13ssp</item>
+        <item name="android:fontFamily">@font/font_400</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="font_400_14">
+        <item name="android:textSize">@dimen/_14ssp</item>
+        <item name="android:fontFamily">@font/font_400</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="font_400_15">
+        <item name="android:textSize">@dimen/_15ssp</item>
+        <item name="android:fontFamily">@font/font_400</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="font_400_16">
+        <item name="android:textSize">@dimen/_16ssp</item>
+        <item name="android:fontFamily">@font/font_400</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="font_400_18">
+        <item name="android:textSize">@dimen/_18ssp</item>
+        <item name="android:fontFamily">@font/font_400</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="font_400_20">
+        <item name="android:textSize">@dimen/_20ssp</item>
+        <item name="android:fontFamily">@font/font_400</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="font_500_10">
+        <item name="android:textSize">@dimen/_10ssp</item>
+        <item name="android:fontFamily">@font/font_500</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="font_500_12">
+        <item name="android:textSize">@dimen/_12ssp</item>
+        <item name="android:fontFamily">@font/font_500</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="font_500_14">
+        <item name="android:textSize">@dimen/_14ssp</item>
+        <item name="android:fontFamily">@font/font_500</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="font_500_16">
+        <item name="android:textSize">@dimen/_16ssp</item>
+        <item name="android:fontFamily">@font/font_500</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="font_500_18">
+        <item name="android:textSize">@dimen/_18ssp</item>
+        <item name="android:fontFamily">@font/font_500</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+
+    <style name="font_600_12">
+        <item name="android:textSize">@dimen/_12ssp</item>
+        <item name="android:fontFamily">@font/font_600</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="font_600_13">
+        <item name="android:textSize">@dimen/_13ssp</item>
+        <item name="android:fontFamily">@font/font_600</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="font_600_14">
+        <item name="android:textSize">@dimen/_14ssp</item>
+        <item name="android:fontFamily">@font/font_600</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="font_600_15">
+        <item name="android:textSize">@dimen/_15ssp</item>
+        <item name="android:fontFamily">@font/font_600</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="font_600_16">
+        <item name="android:textSize">@dimen/_16ssp</item>
+        <item name="android:fontFamily">@font/font_600</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="font_600_18">
+        <item name="android:textSize">@dimen/_18ssp</item>
+        <item name="android:fontFamily">@font/font_600</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="font_700_12">
+        <item name="android:textSize">@dimen/_12ssp</item>
+        <item name="android:fontFamily">@font/font_700</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="font_700_14">
+        <item name="android:textSize">@dimen/_14ssp</item>
+        <item name="android:fontFamily">@font/font_700</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="font_700_13">
+        <item name="android:textSize">@dimen/_13ssp</item>
+        <item name="android:fontFamily">@font/font_700</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="font_700_16">
+        <item name="android:textSize">@dimen/_16ssp</item>
+        <item name="android:fontFamily">@font/font_700</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="font_700_18">
+        <item name="android:textSize">@dimen/_18ssp</item>
+        <item name="android:fontFamily">@font/font_700</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+</resources>

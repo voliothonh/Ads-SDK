@@ -1,0 +1,25 @@
+<resources>
+    <string name="ad_text_loading">광고 로드 중…</string>
+    <string name="ad_welcome_back">다시 오신 것을 환영합니다…</string>
+    <string name="full_screen_ad_will_appear">전체 화면 광고 제공 예정</string>
+    <string name="thanks_for_nyou_feedback">의견을 보내주셔서\n감사합니다!</string>
+
+    <string name="rate_title_s0">우리가 어떻게 지내는지 알려주세요!</string>
+    <string name="rate_title_s1">이런!\n문제가 발생했나요\?</string>
+    <string name="rate_title_s2">이런!\n문제가 발생했나요\?</string>
+    <string name="rate_title_s3">의견을 보내 주셔서 감사합니다.</string>
+    <string name="rate_title_s4">의견을 보내 주셔서 \n감사합니다!</string>
+    <string name="rate_title_s5">우와! 의견을 보내 주셔서 \n감사합니다!</string>
+
+    <string name="rate_description_s0">우리는 항상 우리가 하는 일을 개선하기 위해 노력하고 있으며 귀하의 피드백은 매우 중요합니다!</string>
+    <string name="rate_description_s1">피드백을\n주실 수 있나요\? 우리는 그것을 고치기 위해 최선을 다할 것입니다</string>
+    <string name="rate_description_s2">피드백을\n주실 수 있나요\? 우리는 그것을 고치기 위해 최선을 다할 것입니다</string>
+    <string name="rate_description_s3">피드백을\n주실 수 있나요\? 우리는 그것을 고치기 위해 최선을 다할 것입니다</string>
+    <string name="rate_description_s4">귀하의 피드백은 우리에게 매우 중요합니다!\n우리도 당신을 좋아합니다!</string>
+    <string name="rate_description_s5">귀하의 피드백은 우리에게 매우 중요합니다!\n우리도 당신을 좋아합니다!</string>
+    <string name="how_can_we_do_it_better">어떻게 하면 더 잘할 수 있을까요\?</string>
+    <string name="let_us_know_what_went_wrong_and_we_will_work_on_it">무엇이 잘못되었는지 알려주시면\n해결하겠습니다.</string>
+    <string name="submit">제출하다</string>
+    <string name="type_your_text_here">여기에 입력하세요</string>
+    <string name="thanks_for_purchase">구입 주셔서 감사합니다.</string>
+</resources>

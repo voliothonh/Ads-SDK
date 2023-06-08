@@ -1,0 +1,25 @@
+<resources>
+    <string name="ad_text_loading">تحميل الإعلانات ...</string>
+    <string name="ad_welcome_back">مرحبًا بعودتك…</string>
+    <string name="full_screen_ad_will_appear">إعلان بملء الشاشة قريبًا</string>
+    <string name="thanks_for_nyou_feedback">شكرا لملاحظاتك \ n!</string>
+
+    <string name="rate_title_s0">دعنا نعرف كيف نفعل!</string>
+    <string name="rate_title_s1">أوه لا! \ n حدث خطأ ما؟</string>
+    <string name="rate_title_s2">أوه لا! \ n حدث خطأ ما؟</string>
+    <string name="rate_title_s3">شكرا لك \ n على ملاحظاتك!</string>
+    <string name="rate_title_s4">شكرا لملاحظاتك \ n!</string>
+    <string name="rate_title_s5">رائع! شكرا لملاحظاتك \ n!</string>
+
+    <string name="rate_description_s0">نحاول دائمًا تحسين ما نقوم به وتعليقاتك لا تقدر بثمن!</string>
+    <string name="rate_description_s1">هل يمكنك إعطائي بعض الملاحظات \ n؟ سنبذل قصارى جهدنا لإصلاحه</string>
+    <string name="rate_description_s2">هل يمكنك إعطائي بعض الملاحظات \ n؟ سنبذل قصارى جهدنا لإصلاحه</string>
+    <string name="rate_description_s3">هل يمكنك إعطائي بعض الملاحظات \ n؟ سنبذل قصارى جهدنا لإصلاحه</string>
+    <string name="rate_description_s4">ملاحظاتك مهمة جدًا بالنسبة لنا! \ n نحن معجبون بك أيضًا!</string>
+    <string name="rate_description_s5">ملاحظاتك مهمة جدًا بالنسبة لنا! \ n نحن معجبون بك أيضًا!</string>
+    <string name="how_can_we_do_it_better">كيف يمكننا أن نفعل ذلك بشكل أفضل؟</string>
+    <string name="let_us_know_what_went_wrong_and_we_will_work_on_it">أخبرنا بالخطأ الذي حدث \ n وسنعمل على حله</string>
+    <string name="submit">يُقدِّم</string>
+    <string name="type_your_text_here">اكتب النص هنا</string>
+    <string name="thanks_for_purchase">شكرا لك على الشراء.</string>
+</resources>

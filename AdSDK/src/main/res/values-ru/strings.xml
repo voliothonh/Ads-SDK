@@ -1,0 +1,25 @@
+<resources>
+    <string name="ad_text_loading">Загрузка рекламы…</string>
+    <string name="ad_welcome_back">Добро пожаловать…</string>
+    <string name="full_screen_ad_will_appear">Полноэкранная реклама скоро появится</string>
+    <string name="thanks_for_nyou_feedback">Спасибо за\nваш отзыв!</string>
+
+    <string name="rate_title_s0">Дайте нам знать, как у нас дела!</string>
+    <string name="rate_title_s1">О нет!\nЧто-то пошло не так\?</string>
+    <string name="rate_title_s2">О нет!\nЧто-то пошло не так\?</string>
+    <string name="rate_title_s3">Спасибо\nза ваш отзыв!</string>
+    <string name="rate_title_s4">Спасибо за \nваш отзыв!</string>
+    <string name="rate_title_s5">Ух ты! Спасибо за \nваш отзыв!</string>
+
+    <string name="rate_description_s0">Мы всегда стараемся улучшить то, что мы делаем, и ваши отзывы бесценны!</string>
+    <string name="rate_description_s1">Не могли бы вы дать мне\nотзыв\? Мы постараемся исправить это</string>
+    <string name="rate_description_s2">Не могли бы вы дать мне\nотзыв\? Мы постараемся исправить это</string>
+    <string name="rate_description_s3">Не могли бы вы дать мне\nотзыв\? Мы постараемся исправить это</string>
+    <string name="rate_description_s4">Ваше мнение очень важно для нас!\nВы нам тоже нравитесь!</string>
+    <string name="rate_description_s5">Ваше мнение очень важно для нас!\nВы нам тоже нравитесь!</string>
+    <string name="how_can_we_do_it_better">Как мы можем сделать это лучше\?</string>
+    <string name="let_us_know_what_went_wrong_and_we_will_work_on_it">Сообщите нам, что пошло не так, и\nмы над этим поработаем</string>
+    <string name="submit">Представлять на рассмотрение</string>
+    <string name="type_your_text_here">Вводите текст здесь</string>
+    <string name="thanks_for_purchase">Спасибо за покупку.</string>
+</resources>

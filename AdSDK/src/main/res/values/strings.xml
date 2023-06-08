@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ad_text_loading">Ads loading…</string>
+    <string name="ad_welcome_back">Welcome Back…</string>
+    <string name="ad_welcome_back_2">Welcome Back, everything is ready.</string>
+    <string name="go_to_app">Goto app now</string>
+    <string name="full_screen_ad_will_appear" translatable="false">Full screen ad coming soon</string>
+    <string name="thanks_for_nyou_feedback">Thanks for\nyou feedback!</string>
+
+    <string name="rate_title_s0">Let us know how we’re doing!</string>
+    <string name="rate_title_s1">Oh no!\nSomething went wrong?</string>
+    <string name="rate_title_s2">Oh no!\nSomething went wrong?</string>
+    <string name="rate_title_s3">Thank you \nfor your feedback!</string>
+    <string name="rate_title_s4">Thanks for \nyou feedback!</string>
+    <string name="rate_title_s5">Wow! Thanks for \nyou feedback!</string>
+
+    <string name="rate_description_s0">We are always trying to improve what we do and your feedback is invaluable!</string>
+    <string name="rate_description_s1">Could you please give me some\nfeedback? We will try our best to fix it</string>
+    <string name="rate_description_s2">Could you please give me some\nfeedback? We will try our best to fix it</string>
+    <string name="rate_description_s3">Could you please give me some\nfeedback? We will try our best to fix it</string>
+    <string name="rate_description_s4">Your feedback is very important to us!\nWe like you too!</string>
+    <string name="rate_description_s5">Your feedback is very important to us!\nWe like you too!</string>
+    <string name="how_can_we_do_it_better">How can we do it better?</string>
+    <string name="let_us_know_what_went_wrong_and_we_will_work_on_it">Let us know what went wrong and\nwe will work on it</string>
+    <string name="submit">Submit</string>
+    <string name="type_your_text_here">Type your text here</string>
+    <string name="thanks_for_purchase">Thank you for your purchase.</string>
+</resources>

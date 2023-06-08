@@ -1,0 +1,25 @@
+<resources>
+    <string name="ad_text_loading">विज्ञापन लोड हो रहे हैं...</string>
+    <string name="ad_welcome_back">वापसी पर स्वागत है…</string>
+    <string name="full_screen_ad_will_appear">फ़ुल स्क्रीन विज्ञापन जल्द ही आ रहा है</string>
+    <string name="thanks_for_nyou_feedback">आपके फ़ीडबैक के लिए धन्यवाद!</string>
+
+    <string name="rate_title_s0">हमें बताएं कि हम कैसे कर रहे हैं!</string>
+    <string name="rate_title_s1">अरे नहीं!\nकुछ गलत हो गया\?</string>
+    <string name="rate_title_s2">अरे नहीं!\nकुछ गलत हो गया\?</string>
+    <string name="rate_title_s3">आपके फ़ीडबैक के लिए धन्यवाद \n!</string>
+    <string name="rate_title_s4">आपके फ़ीडबैक के लिए धन्यवाद!</string>
+    <string name="rate_title_s5">बहुत खूब! आपके फ़ीडबैक के लिए धन्यवाद!</string>
+
+    <string name="rate_description_s0">हम हमेशा अपने काम में सुधार करने की कोशिश कर रहे हैं और आपकी प्रतिक्रिया अमूल्य है!</string>
+    <string name="rate_description_s1">क्या आप कृपया मुझे कुछ\nफीडबैक दे सकते हैं\? हम इसे ठीक करने की पूरी कोशिश करेंगे</string>
+    <string name="rate_description_s2">क्या आप कृपया मुझे कुछ\nफीडबैक दे सकते हैं\? हम इसे ठीक करने की पूरी कोशिश करेंगे</string>
+    <string name="rate_description_s3">क्या आप कृपया मुझे कुछ\nफीडबैक दे सकते हैं\? हम इसे ठीक करने की पूरी कोशिश करेंगे</string>
+    <string name="rate_description_s4">आपका फ़ीडबैक हमारे लिए बहुत महत्वपूर्ण है!\nहम भी आपको पसंद करते हैं!</string>
+    <string name="rate_description_s5">आपका फ़ीडबैक हमारे लिए बहुत महत्वपूर्ण है!\nहम भी आपको पसंद करते हैं!</string>
+    <string name="how_can_we_do_it_better">हम इसे बेहतर कैसे कर सकते हैं\?</string>
+    <string name="let_us_know_what_went_wrong_and_we_will_work_on_it">हमें बताएं कि क्या गड़बड़ी हुई और\nहम इस पर काम करेंगे</string>
+    <string name="submit">जमा करना</string>
+    <string name="type_your_text_here">यहां अपना पाठ लिखें</string>
+    <string name="thanks_for_purchase">आपकी खरीद के लिए आपको धन्यवाद।</string>
+</resources>

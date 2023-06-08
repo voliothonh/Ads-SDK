@@ -1,0 +1,25 @@
+<resources>
+    <string name="ad_text_loading">Memuat iklan…</string>
+    <string name="ad_welcome_back">Selamat Datang kembali…</string>
+    <string name="full_screen_ad_will_appear">Iklan layar penuh segera hadir</string>
+    <string name="thanks_for_nyou_feedback">Terima kasih atas\nmasukan Anda!</string>
+
+    <string name="rate_title_s0">Beri tahu kami bagaimana keadaan kami!</string>
+    <string name="rate_title_s1">Aduh!\nAda yang salah\?</string>
+    <string name="rate_title_s2">Aduh!\nAda yang salah\?</string>
+    <string name="rate_title_s3">Terima kasih \natas tanggapan Anda!</string>
+    <string name="rate_title_s4">Terima kasih atas \nmasukan Anda!</string>
+    <string name="rate_title_s5">Wow! Terima kasih atas \nmasukan Anda!</string>
+
+    <string name="rate_description_s0">Kami selalu berusaha untuk meningkatkan apa yang kami lakukan dan umpan balik Anda sangat berharga!</string>
+    <string name="rate_description_s1">Bisakah Anda memberi saya beberapa\nmasukan\? Kami akan berusaha sebaik mungkin untuk memperbaikinya</string>
+    <string name="rate_description_s2">Bisakah Anda memberi saya beberapa\nmasukan\? Kami akan berusaha sebaik mungkin untuk memperbaikinya</string>
+    <string name="rate_description_s3">Bisakah Anda memberi saya beberapa\nmasukan\? Kami akan berusaha sebaik mungkin untuk memperbaikinya</string>
+    <string name="rate_description_s4">Masukan Anda sangat penting bagi kami!\nKami juga menyukai Anda!</string>
+    <string name="rate_description_s5">Masukan Anda sangat penting bagi kami!\nKami juga menyukai Anda!</string>
+    <string name="how_can_we_do_it_better">Bagaimana kita bisa melakukannya dengan lebih baik\?</string>
+    <string name="let_us_know_what_went_wrong_and_we_will_work_on_it">Beri tahu kami apa yang salah dan\nkami akan memperbaikinya</string>
+    <string name="submit">Kirim</string>
+    <string name="type_your_text_here">Ketik teks Anda di sini</string>
+    <string name="thanks_for_purchase">Terima kasih atas pembelian Anda.</string>
+</resources>

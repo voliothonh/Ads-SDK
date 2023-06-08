@@ -1,0 +1,25 @@
+<resources>
+    <string name="ad_text_loading">広告を読み込んでいます…</string>
+    <string name="ad_welcome_back">おかえり…</string>
+    <string name="full_screen_ad_will_appear">全画面広告は近日公開予定</string>
+    <string name="thanks_for_nyou_feedback">フィードバックありがとう\n!</string>
+
+    <string name="rate_title_s0">私たちのやり方を教えてください！</string>
+    <string name="rate_title_s1">だめだ!\n何か問題が発生した\?</string>
+    <string name="rate_title_s2">だめだ!\n何か問題が発生した\?</string>
+    <string name="rate_title_s3">\nフィードバックありがとうございます!</string>
+    <string name="rate_title_s4">\nフィードバックありがとうございます!</string>
+    <string name="rate_title_s5">おお！ \nフィードバックありがとうございます!</string>
+
+    <string name="rate_description_s0">私たちは常に私たちの仕事を改善しようとしています。あなたのフィードバックは非常に貴重です!</string>
+    <string name="rate_description_s1">フィードバックを\nいただけませんか\?私たちはそれを修正するために最善を尽くします</string>
+    <string name="rate_description_s2">フィードバックを\nいただけませんか\?私たちはそれを修正するために最善を尽くします</string>
+    <string name="rate_description_s3">フィードバックを\nいただけませんか\?私たちはそれを修正するために最善を尽くします</string>
+    <string name="rate_description_s4">あなたのフィードバックは私たちにとって非常に重要です!\n私たちもあなたを気に入っています!</string>
+    <string name="rate_description_s5">あなたのフィードバックは私たちにとって非常に重要です!\n私たちもあなたを気に入っています!</string>
+    <string name="how_can_we_do_it_better">どうすればもっとうまくできるでしょうか？</string>
+    <string name="let_us_know_what_went_wrong_and_we_will_work_on_it">問題が発生したことをお知らせください。\n解決に向けて取り組みます</string>
+    <string name="submit">送信</string>
+    <string name="type_your_text_here">ここにテキストを入力してください</string>
+    <string name="thanks_for_purchase">ご購入いただきありがとうございます。</string>
+</resources>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ad_text_loading">Anuncios cargando...</string>
+    <string name="ad_welcome_back">Bienvenido de nuevo...</string>
+    <string name="full_screen_ad_will_appear">Anuncio a pantalla completa próximamente</string>
+    <string name="thanks_for_nyou_feedback">¡Gracias por sus comentarios!</string>
+
+    <string name="rate_title_s0">¡Cuéntanos cómo lo estamos haciendo!</string>
+    <string name="rate_title_s1">¡Oh, no!\n¿Algo salió mal?</string>
+    <string name="rate_title_s2">¡Oh, no!\n¿Algo salió mal?</string>
+    <string name="rate_title_s3">¡Gracias \npor sus comentarios!</string>
+    <string name="rate_title_s4">¡Gracias por tus comentarios!</string>
+    <string name="rate_title_s5">¡Guau! ¡Gracias por \nsus comentarios!</string>
+
+    <string name="rate_description_s0">¡Siempre intentamos mejorar lo que hacemos y sus comentarios son invaluables!</string>
+    <string name="rate_description_s1">¿Podría darme algún\ncomentario? Haremos todo lo posible para solucionarlo</string>
+    <string name="rate_description_s2">¿Podría darme algún\ncomentario? Haremos todo lo posible para solucionarlo</string>
+    <string name="rate_description_s3">¿Podría darme algún\ncomentario? Haremos todo lo posible para solucionarlo</string>
+    <string name="rate_description_s4">¡Tus comentarios son muy importantes para nosotros!\n¡También nos gustas!</string>
+    <string name="rate_description_s5">¡Tus comentarios son muy importantes para nosotros!\n¡También nos gustas!</string>
+    <string name="how_can_we_do_it_better">¿Cómo podemos hacerlo mejor?</string>
+    <string name="let_us_know_what_went_wrong_and_we_will_work_on_it">Háganos saber qué salió mal y\ntrabajaremos en ello</string>
+    <string name="enviar">Enviar</string>
+    <string name="type_your_text_here">Escriba su texto aquí</string>
+    <string name="thanks_for_purchase">Gracias por su compra.</string>
+</resources>

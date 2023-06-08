@@ -1,0 +1,194 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-parcelize'
+    id 'maven-publish'
+    id 'kotlin-android'
+}
+
+group = 'com.github.voliothonh'
+version = '1.0.0'
+
+android {
+    namespace 'com.admob.ads'
+    compileSdk  32
+
+    defaultConfig {
+        minSdk 24
+        targetSdk 32
+        versionCode 1
+        versionName "1.0.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_11.toString()
+    }
+
+    dataBinding {
+        enabled = true
+    }
+}
+
+dependencies {
+
+    api 'androidx.core:core-ktx:1.7.0'
+    api 'androidx.appcompat:appcompat:1.5.1'
+    api 'com.google.android.material:material:1.7.0'
+
+    implementation platform('com.google.firebase:firebase-bom:32.1.0')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    api 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-config-ktx'
+
+    implementation 'com.tencent:mmkv:1.2.14'
+
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
+    implementation "androidx.lifecycle:lifecycle-process:2.6.1"
+
+    implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
+    implementation 'com.google.android.gms:play-services-ads:22.1.0'
+    implementation 'com.google.firebase:firebase-ads:22.1.0'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
+
+    implementation 'com.airbnb.android:lottie:6.0.0'
+
+    // mediation
+    implementation 'com.google.ads.mediation:facebook:6.13.7.0'
+    implementation 'com.google.ads.mediation:adcolony:4.8.0.1'
+    implementation 'com.google.ads.mediation:applovin:11.8.2.0'
+    implementation 'com.google.ads.mediation:vungle:6.12.1.0'
+    implementation 'com.google.ads.mediation:pangle:5.0.1.1.0'
+    implementation 'com.google.ads.mediation:mintegral:16.4.31.0'
+
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = "com.github.voliothonh"
+                artifactId = "Ads-SDK"
+                version = "1.0.0"
+            }
+        }
+    }
+}
+
+abstract class SDPFactory extends DefaultTask {
+
+    @Input
+    String unit = "dp"
+    @Input
+    double positiveMax = 600
+    @Input
+    double negativeMax = 60
+
+    @TaskAction
+    def create() {
+        String resFolder = project.getProjectDir().getPath() + "/src/main/res/"
+        for (double dimen = 300; dimen <= 1080; dimen = dimen + 30) {
+            String folder = resFolder + "values-sw" + (int) dimen + "dp"
+            String fileName = folder + "/positive_sdps.xml"
+            new File(folder).mkdir()
+            new File(fileName).createNewFile()
+            PrintWriter printWriter = new PrintWriter(fileName)
+            printWriter.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>")
+            printWriter.println("<resources>")
+            for (int i = 1; i <= positiveMax; i++) {
+                double ratio = i / 360d
+                double sdp = ratio * dimen
+                printWriter.printf("\t<dimen name=\"_%dsdp\">%.2f" + unit + "</dimen>\r\n", i, sdp)
+            }
+            printWriter.println("</resources>")
+            printWriter.close()
+        }
+        for (double dimen = 300; dimen <= 1080; dimen = dimen + 30) {
+            String folder = resFolder + "values-sw" + (int) dimen + "dp"
+            String fileName = folder + "/negative_sdps.xml"
+            new File(folder).mkdir()
+            new File(fileName).createNewFile()
+            PrintWriter printWriter = new PrintWriter(fileName)
+            printWriter.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>")
+            printWriter.println("<resources>")
+            for (int i = 1; i <= negativeMax; i++) {
+                double ratio = i / 360d
+                double sdp = ratio * dimen
+                printWriter.printf("\t<dimen name=\"_minus%dsdp\">%.2f" + unit + "</dimen>\r\n", i, -sdp)
+            }
+            printWriter.println("</resources>")
+            printWriter.close()
+        }
+    }
+}
+
+task createSDP(type: SDPFactory) {
+
+}
+
+createSDP {
+    unit = "dp"
+    positiveMax = 600//change to 600 or any other value if needed
+    negativeMax = 60//change to 600 or any other value if needed
+}
+
+
+abstract class SSPFactory extends DefaultTask {
+
+    @Input
+    String unit = "sp"
+    @Input
+    double positiveMax = 100
+
+    @TaskAction
+    def create() {
+        String resFolder = project.getProjectDir().getPath() + "/src/main/res/";
+        for (double dimen = 300; dimen <= 1080; dimen = dimen + 30) {
+            createPositive(resFolder, dimen)
+        }
+    }
+
+    private void createPositive(String resFolder, double dimen) {
+        String folder = resFolder + "values-sw" + (int) dimen + "dp";
+        String fileName = folder + "/positive_ssps.xml";
+        new File(folder).mkdir();
+        new File(fileName).createNewFile();
+        PrintWriter printWriter = new PrintWriter(fileName);
+        printWriter.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+        printWriter.println("<resources>");
+        for (int i = 1; i <= positiveMax; i++) {
+            double ratio = i / 360d;
+            double ssp = ratio * dimen;
+            printWriter.printf("\t<dimen name=\"_%dssp\">%.2f" + unit + "</dimen>\r\n", i, ssp);
+        }
+        printWriter.println("</resources>");
+        printWriter.close();
+    }
+}
+
+task createSSP(type: SSPFactory) {
+}
+
+
+createSSP {
+    unit = "sp"
+    positiveMax = 100
+}

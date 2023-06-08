@@ -1,0 +1,25 @@
+<resources>
+    <string name="ad_text_loading">Chargement des annonces…</string>
+    <string name="ad_welcome_back">Content de te revoir…</string>
+    <string name="full_screen_ad_will_appear">Annonce plein écran bientôt disponible</string>
+    <string name="thanks_for_nyou_feedback"><![CDATA[Merci pour\nvos commentaires!]]></string>
+
+    <string name="rate_title_s0">Faites-nous savoir comment nous allons !</string>
+    <string name="rate_title_s1"><![CDATA[Oh non!\nQuelque chose s\'est mal passé\?]]></string>
+    <string name="rate_title_s2"><![CDATA[Oh non!\nQuelque chose s\'est mal passé\?]]></string>
+    <string name="rate_title_s3"><![CDATA[Merci \npour vos commentaires!]]></string>
+    <string name="rate_title_s4"><![CDATA[Merci pour vos commentaires!]]></string>
+    <string name="rate_title_s5"><![CDATA[Ouah! Merci pour vos commentaires!]]></string>
+
+    <string name="rate_description_s0">Nous essayons toujours d\'améliorer ce que nous faisons et vos commentaires sont inestimables !</string>
+    <string name="rate_description_s1"><![CDATA[Pourriez-vous s\'il vous plaît me donner des commentaires\? Nous ferons de notre mieux pour le réparer]]></string>
+    <string name="rate_description_s2"><![CDATA[Pourriez-vous s\'il vous plaît me donner des commentaires\? Nous ferons de notre mieux pour le réparer]]></string>
+    <string name="rate_description_s3"><![CDATA[Pourriez-vous s\'il vous plaît me donner des commentaires\? Nous ferons de notre mieux pour le réparer]]></string>
+    <string name="rate_description_s4"><![CDATA[Vos commentaires sont très importants pour nous!\nNous vous aimons aussi!]]></string>
+    <string name="rate_description_s5"><![CDATA[Vos commentaires sont très importants pour nous!\nNous vous aimons aussi!]]></string>
+    <string name="how_can_we_do_it_better">Comment pouvons-nous faire mieux\?</string>
+    <string name="let_us_know_what_went_wrong_and_we_will_work_on_it">Faites-nous savoir ce qui ne va pas et\nnous y travaillerons</string>
+    <string name="submit">Soumettre</string>
+    <string name="type_your_text_here">Écrivez votre texte ici</string>
+    <string name="thanks_for_purchase">Merci pour votre achat.</string>
+</resources>
