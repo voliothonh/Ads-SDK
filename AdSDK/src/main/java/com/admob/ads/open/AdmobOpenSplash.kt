@@ -4,6 +4,7 @@ import android.os.CountDownTimer
 import com.admob.AdType
 import com.admob.TAdCallback
 import com.admob.ads.AdsSDK
+import com.admob.ads.interstitial.AdmobInterSplash
 import com.admob.getAppCompatActivityOnTop
 import com.admob.onNextActionWhenResume
 import com.admob.waitActivityResumed
@@ -42,16 +43,19 @@ object AdmobOpenSplash {
 
             override fun onAdFailedToLoad(adUnit: String, adType: AdType, error: LoadAdError) {
                 super.onAdFailedToLoad(adUnit, adType, error)
+                timer?.cancel()
                 onNextActionWhenResume(nextAction)
             }
 
             override fun onAdFailedToShowFullScreenContent(adUnit: String, adType: AdType) {
                 super.onAdFailedToShowFullScreenContent(adUnit, adType)
+                timer?.cancel()
                 onNextActionWhenResume(nextAction)
             }
 
             override fun onAdDismissedFullScreenContent(adUnit: String, adType: AdType) {
                 super.onAdDismissedFullScreenContent(adUnit, adType)
+                timer?.cancel()
                 onNextActionWhenResume(nextAction)
             }
         }

@@ -34,11 +34,13 @@ object AdmobInterSplash {
         val callback = object : TAdCallback {
             override fun onAdFailedToLoad(adUnit: String, adType: AdType, error: LoadAdError) {
                 super.onAdFailedToLoad(adUnit, adType, error)
+                timer?.cancel()
                 onNextActionWhenResume(nextAction)
             }
 
             override fun onAdFailedToShowFullScreenContent(adUnit: String, adType: AdType) {
                 super.onAdFailedToShowFullScreenContent(adUnit, adType)
+                timer?.cancel()
                 onNextActionWhenResume(nextAction)
             }
         }
