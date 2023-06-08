@@ -23,10 +23,18 @@ object AdsSDK {
 
     internal lateinit var app: Application
 
-    internal var isEnableBanner = true
-    internal var isEnableNative = true
-    internal var isEnableInter = true
-    internal var isEnableOpenAds = true
+    var isEnableBanner = true
+        private set
+
+    var isEnableNative = true
+        private set
+
+    var isEnableInter = true
+        private set
+
+    var isEnableOpenAds = true
+        private set
+
 
     private var outsideAdCallback: TAdCallback? = null
 
@@ -162,16 +170,16 @@ object AdsSDK {
         AdmobBanner.setEnableBanner(isEnable)
     }
 
-    fun setEnableNative(isEnable: Boolean){
+    fun setEnableNative(isEnable: Boolean) {
         isEnableNative = isEnable
         AdmobNative.setEnableNative(isEnable)
     }
 
-    fun setEnableInter(isEnable: Boolean){
+    fun setEnableInter(isEnable: Boolean) {
         isEnableInter = isEnable
     }
 
-    fun setEnableOpenAds(isEnable : Boolean){
+    fun setEnableOpenAds(isEnable: Boolean) {
         isEnableOpenAds = isEnable
     }
 
