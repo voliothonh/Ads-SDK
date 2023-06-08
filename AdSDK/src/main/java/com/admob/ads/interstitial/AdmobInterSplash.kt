@@ -4,6 +4,7 @@ import android.os.CountDownTimer
 import com.admob.AdType
 import com.admob.TAdCallback
 import com.admob.ads.AdsSDK
+import com.admob.ads.open.AdmobOpenSplash
 import com.admob.getAppCompatActivityOnTop
 import com.admob.onNextActionWhenResume
 import com.admob.waitActivityResumed
@@ -49,6 +50,7 @@ object AdmobInterSplash {
             override fun onTick(millisUntilFinished: Long) {
 
                 if (!AdsSDK.isEnableInter) {
+                    timer?.cancel()
                     nextAction.invoke()
                     return
                 }

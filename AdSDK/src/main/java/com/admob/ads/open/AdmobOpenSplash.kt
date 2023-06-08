@@ -69,6 +69,7 @@ object AdmobOpenSplash {
             override fun onTick(millisUntilFinished: Long) {
 
                 if (!AdsSDK.isEnableOpenAds) {
+                    timer?.cancel()
                     onAdLoaded.invoke()
                     nextAction.invoke()
                     return
