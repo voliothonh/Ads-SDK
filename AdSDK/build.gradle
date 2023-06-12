@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'com.github.voliothonh'
-version = '1.0.0'
+version = '1.0.6'
 
 android {
     namespace 'com.admob.ads'
@@ -17,7 +17,7 @@ android {
         minSdk 24
         targetSdk 32
         versionCode 1
-        versionName "1.0.0"
+        versionName "1.0.6"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -87,7 +87,7 @@ afterEvaluate {
                 from components.release
                 groupId = "com.github.voliothonh"
                 artifactId = "Ads-SDK"
-                version = "1.0.0"
+                version = "1.0.6"
             }
         }
     }
