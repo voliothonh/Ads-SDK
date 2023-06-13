@@ -9,8 +9,8 @@ import com.admob.adaptiveBannerSize
 import com.admob.addLoadingView
 import com.admob.ads.AdsSDK
 import com.admob.ads.AdsSDK.isEnableBanner
+import com.admob.getPaidTrackingBundle
 import com.admob.isNetworkAvailable
-import com.admob.trackingAdValue
 import com.google.ads.mediation.admob.AdMobAdapter
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
@@ -215,8 +215,9 @@ object AdmobBanner {
 
 
                 adView.setOnPaidEventListener { adValue ->
-                    val adapter = adView.responseInfo?.mediationAdapterClassName
-                    trackingAdValue(adValue, adUnitId, "Banner", adapter)
+                    val bundle = getPaidTrackingBundle(adValue, adUnitId, "Banner", adView.responseInfo)
+                    AdsSDK.adCallback.onPaidValueListener(bundle)
+                    tAdCallback?.onPaidValueListener(bundle)
                 }
 
                 banners[adView.adUnitId] = adView

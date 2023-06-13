@@ -14,8 +14,8 @@ import com.admob.TAdCallback
 import com.admob.ads.AdsSDK
 import com.admob.ads.R
 import com.admob.ads.databinding.AdLoadingViewBinding
+import com.admob.getPaidTrackingBundle
 import com.admob.isNetworkAvailable
-import com.admob.trackingAdValue
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.AdRequest
@@ -144,9 +144,10 @@ object AdmobNative {
                 natives[adUnitId]?.destroy()
                 natives[adUnitId] = ad
                 nativesLoading[adUnitId]?.forNativeAd(adUnitId, ad)
-                val adapter = ad.responseInfo?.mediationAdapterClassName
                 ad.setOnPaidEventListener { adValue ->
-                    trackingAdValue(adValue, adUnitId, "Native", adapter)
+                    val bundle = getPaidTrackingBundle(adValue, adUnitId, "Native", ad.responseInfo)
+                    AdsSDK.adCallback.onPaidValueListener(bundle)
+                    callback?.onPaidValueListener(bundle)
                 }
             }
             .withAdListener(object : AdListener() {

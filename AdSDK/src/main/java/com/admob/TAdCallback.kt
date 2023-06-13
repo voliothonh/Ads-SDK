@@ -1,5 +1,6 @@
 package com.admob
 
+import android.os.Bundle
 import com.google.android.gms.ads.LoadAdError
 
 interface TAdCallback {
@@ -13,6 +14,7 @@ interface TAdCallback {
     fun onAdLoaded(adUnit: String, adType: AdType) {}
     fun onAdOpened(adUnit: String, adType: AdType) {}
     fun onAdSwipeGestureClicked(adUnit: String, adType: AdType) {}
+    fun onPaidValueListener(bundle : Bundle) {}
 }
 
 enum class AdType {

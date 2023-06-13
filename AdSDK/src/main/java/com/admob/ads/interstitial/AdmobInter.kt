@@ -8,8 +8,8 @@ import com.admob.ads.AdsSDK
 import com.admob.delay
 import com.admob.getActivityOnTop
 import com.admob.getAppCompatActivityOnTop
+import com.admob.getPaidTrackingBundle
 import com.admob.isNetworkAvailable
-import com.admob.trackingAdValue
 import com.admob.ui.dialogs.DialogShowLoadingAds
 import com.admob.waitActivityResumed
 import com.admob.waitActivityStop
@@ -98,8 +98,9 @@ object AdmobInter {
                     callback?.onAdLoaded(adUnitId, AdType.Inter)
 
                     interstitialAd.setOnPaidEventListener { adValue ->
-                        val adapter = interstitialAd.responseInfo.mediationAdapterClassName
-                        trackingAdValue(adValue, adUnitId, "Inter", adapter)
+                        val bundle = getPaidTrackingBundle(adValue, adUnitId, "Inter", interstitialAd.responseInfo)
+                        AdsSDK.adCallback.onPaidValueListener(bundle)
+                        callback?.onPaidValueListener(bundle)
                     }
 
                     intersLoading.remove(adUnitId)

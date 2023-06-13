@@ -15,6 +15,7 @@ import com.admob.ads.interstitial.AdmobInterResume
 import com.admob.ads.nativead.AdmobNative
 import com.admob.ads.open.AdmobOpenResume
 import com.admob.logAdClicked
+import com.admob.logParams
 import com.google.android.gms.ads.AdActivity
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
@@ -34,6 +35,8 @@ object AdsSDK {
 
     var isEnableOpenAds = true
         private set
+
+    private var autoLogPaidValueTrackingInSdk = false
 
 
     private var outsideAdCallback: TAdCallback? = null
@@ -100,6 +103,22 @@ object AdsSDK {
             super.onAdSwipeGestureClicked(adUnit, adType)
             outsideAdCallback?.onAdSwipeGestureClicked(adUnit, adType)
             adLogger(adType, adUnit, "onAdSwipeGestureClicked")
+        }
+
+        override fun onPaidValueListener(bundle: Bundle) {
+            super.onPaidValueListener(bundle)
+            outsideAdCallback?.onPaidValueListener(bundle)
+
+            if (autoLogPaidValueTrackingInSdk) {
+                logParams("AdValue") {
+                    bundle.keySet().forEach { key ->
+                        val value = bundle.getString(key)
+                        if (!value.isNullOrBlank()) {
+                            param(key, value)
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -181,6 +200,10 @@ object AdsSDK {
 
     fun setEnableOpenAds(isEnable: Boolean) {
         isEnableOpenAds = isEnable
+    }
+
+    fun setAutoTrackingPaidValueInSdk(useInSDK: Boolean) {
+        autoLogPaidValueTrackingInSdk = useInSDK
     }
 
     internal fun defaultAdRequest(): AdRequest {

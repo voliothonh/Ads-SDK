@@ -3,10 +3,9 @@ package com.admob.ads.open
 import com.admob.AdType
 import com.admob.TAdCallback
 import com.admob.ads.AdsSDK
-import com.admob.ads.open.AdmobOpenResume.adUnitId
 import com.admob.getActivityOnTop
+import com.admob.getPaidTrackingBundle
 import com.admob.logAdImpression
-import com.admob.trackingAdValue
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
@@ -39,9 +38,10 @@ object AdmobOpen {
                     AdsSDK.adCallback.onAdLoaded(adUnitId, AdType.OpenApp)
                     callback?.onAdLoaded(adUnitId, AdType.OpenApp)
                     onAdLoaded.invoke(appOpenAd)
-                    val adapter = appOpenAd.responseInfo.mediationAdapterClassName
                     appOpenAd.setOnPaidEventListener { adValue ->
-                        trackingAdValue(adValue, adUnitId, "OpenApp", adapter)
+                        val bundle = getPaidTrackingBundle(adValue, adUnitId, "OpenApp", appOpenAd.responseInfo)
+                        AdsSDK.adCallback.onPaidValueListener(bundle)
+                        callback?.onPaidValueListener(bundle)
                     }
                 }
             }

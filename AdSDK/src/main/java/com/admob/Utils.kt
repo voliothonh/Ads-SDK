@@ -6,6 +6,7 @@ import android.content.res.Resources
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
+import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
 import android.util.Log
@@ -21,6 +22,7 @@ import com.admob.ads.AdsSDK
 import com.admob.ads.databinding.AdLoadingViewBinding
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdValue
+import com.google.android.gms.ads.ResponseInfo
 
 
 val displayMetrics: DisplayMetrics get() = Resources.getSystem().displayMetrics
@@ -38,19 +40,24 @@ val adaptiveBannerSize: AdSize
         return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(AdsSDK.app, adWidth)
     }
 
+fun getPaidTrackingBundle(
+    adValue: AdValue,
+    adId: String,
+    adType: String,
+    responseInfo: ResponseInfo?
+): Bundle {
+    return Bundle().apply {
+        putString("ad_unit_id", adId)
+        putString("ad_type", adType)
+        putString("revenue_micros", "${adValue.valueMicros}")
+        putString("currency_code", adValue.currencyCode)
+        putString("precision_type", "${adValue.precisionType}")
+        val adapterResponseInfo = responseInfo?.loadedAdapterResponseInfo
 
-fun trackingAdValue(adValue: AdValue, adId: String, adType: String, mediationClazz: String?) {
-    val value = (adValue.valueMicros / 1000000.0).toString()
-    val getCurrencyCode = adValue.currencyCode
-    val precisionType = (adValue.precisionType).toString()
-
-    logParams("AdValue") {
-        param("adId", adId)
-        param("adType", adType)
-        param("value", value)
-        param("getCurrencyCode", getCurrencyCode)
-        param("precisionType", precisionType)
-        param("mediationClazz", mediationClazz ?: "")
+        adapterResponseInfo?.let {
+            putString("ad_source_id", it.adSourceId)
+            putString("ad_source_name", it.adSourceName)
+        }
     }
 }
 
@@ -116,7 +123,7 @@ fun Activity.avoidShowWhenResume(block: () -> Unit) {
 }
 
 fun delay(duration: Int, block: () -> Unit) {
-    if (duration > 0){
+    if (duration > 0) {
         safeRun {
             Handler()
                 .postDelayed(
@@ -130,7 +137,7 @@ fun delay(duration: Int, block: () -> Unit) {
 }
 
 fun delay(duration: Long, block: () -> Unit) {
-    if (duration > 0){
+    if (duration > 0) {
         safeRun {
             Handler()
                 .postDelayed(
@@ -159,15 +166,14 @@ fun Context.isInternetConnected(): Boolean {
 }
 
 
-
-fun AppCompatActivity?.runIfResuming(block : () -> Unit) {
-    if (this?.lifecycle?.currentState == Lifecycle.State.RESUMED){
+fun AppCompatActivity?.runIfResuming(block: () -> Unit) {
+    if (this?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
         block.invoke()
     }
 }
 
 
-fun ViewGroup.addLoadingView(){
+fun ViewGroup.addLoadingView() {
     val view = AdLoadingViewBinding
         .inflate(LayoutInflater.from(context), null, false)
         .root
@@ -176,8 +182,6 @@ fun ViewGroup.addLoadingView(){
     addView(view)
     view.requestLayout()
 }
-
-
 
 
 /**

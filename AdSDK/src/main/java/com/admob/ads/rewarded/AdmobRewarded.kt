@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.admob.AdType
 import com.admob.TAdCallback
 import com.admob.ads.AdsSDK
-import com.admob.trackingAdValue
+import com.admob.getPaidTrackingBundle
 import com.admob.ui.dialogs.DialogShowLoadingAds
 import com.admob.waitActivityResumed
 import com.google.android.gms.ads.AdError
@@ -55,8 +55,9 @@ object AdmobRewarded {
                     callBack?.onAdLoaded(adUnitId, AdType.Rewarded)
 
                     rewardedAd.setOnPaidEventListener { adValue ->
-                        val adapter = rewardedAd.responseInfo.mediationAdapterClassName
-                        trackingAdValue(adValue, adUnitId, "Rewarded", adapter)
+                        val bundle = getPaidTrackingBundle(adValue, adUnitId, "Rewarded", rewardedAd.responseInfo)
+                        AdsSDK.adCallback.onPaidValueListener(bundle)
+                        callBack?.onPaidValueListener(bundle)
                     }
 
                     rewardedAd.fullScreenContentCallback = object : FullScreenContentCallback() {

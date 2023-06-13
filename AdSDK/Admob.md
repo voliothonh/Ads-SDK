@@ -1,11 +1,31 @@
 # Welcome to AdsSDK
 
+**dependency**
+```
+implementation 'com.github.voliothonh:Ads-SDK:x.x.x'
+```
+https://github.com/voliothonh/Ads-SDK/releases
 
-## 1.  Init SDK
+**settings.gradle**
+```
+dependencyResolutionManagement {  
+  repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)  
+    repositories {  
+	  google()  
+      mavenCentral()  
+      jcenter()  
+      maven { url "https://jitpack.io" }  
+	  maven { url 'https://artifact.bytedance.com/repository/pangle/' }  
+	  maven { url 'https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea' }  
+ }}
+ ```
+
+
+## 1.  Khởi tạo SDK trong Application class
 ```kotlin
 AdsSDK.init(this)  
-    .setAdCallback(adCallback) // Set global callback for all AdType/AdUnit
-    .setIgnoreAdResume(SplashActivity::class.java) // Ingore show AdResume in these classes
+    .setAdCallback(globalCallback) // Set global callback for all AdType/AdUnit
+    .setIgnoreAdResume(SplashActivity::class.java) // Ingore show AdResume in these classes (All fragments and Activities is Accepted)
  ```
 
  <br/>
@@ -75,6 +95,7 @@ Hiển thị Native.
 * Nếu **nativeAd** chưa được load => Thực hiện load Native rồi fill vào ViewGroup
 * Nếu **nativeAd** đã được load trước đó => Thực hiện fill vào Group
 * ```adUnitId``` là key để lưu lại instance của NativeAd
+* IdView của NativeLayout tham khảo trong: https://github.com/voliothonh/Ads-SDK/blob/master/AdSDK/src/main/res/layout/layout_native_demo.xml
 
 ```kotlin
 /**  
@@ -214,3 +235,35 @@ fun show(
     onUserEarnedReward: () -> Unit  
 )
 ```
+
+
+##  Tracking
+Set tự động tracking AdValue lên Firebase
+
+```kotlin
+AdsSDK.setAutoTrackingPaidValueInSdk(useInSDK: Boolean)
+```
+<br/>
+Các giá trị được push lên firebase nằm trong function này
+
+```kotlin
+fun getPaidTrackingBundle(  
+    adValue: AdValue,  
+  adId: String,  
+  adType: String,  
+  responseInfo: ResponseInfo?  
+): Bundle {  
+    return Bundle().apply {  
+		putString("ad_unit_id", adId)  
+        putString("ad_type", adType)  
+        putString("revenue_micros", "${adValue.valueMicros}")  
+        putString("currency_code", adValue.currencyCode)  
+        putString("precision_type", "${adValue.precisionType}")  
+        
+        val adapterResponseInfo = responseInfo?.loadedAdapterResponseInfo  
+			adapterResponseInfo?.let {  
+			  putString("ad_source_id", it.adSourceId)  
+	          putString("ad_source_name", it.adSourceName)  
+	       }  
+ }}
+ ```
