@@ -96,13 +96,6 @@ object AdmobInter {
                 override fun onAdLoaded(interstitialAd: InterstitialAd) {
                     AdsSDK.adCallback.onAdLoaded(adUnitId, AdType.Inter)
                     callback?.onAdLoaded(adUnitId, AdType.Inter)
-
-//                    interstitialAd.setOnPaidEventListener { adValue ->
-//                        val bundle = getPaidTrackingBundle(adValue, adUnitId, "Inter", interstitialAd.responseInfo)
-//                        AdsSDK.adCallback.onPaidValueListener(bundle)
-//                        callback?.onPaidValueListener(bundle)
-//                    }
-
                     intersLoading.remove(adUnitId)
                     inters[adUnitId] = interstitialAd
                 }
