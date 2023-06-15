@@ -96,13 +96,6 @@ object AdmobInter {
                 override fun onAdLoaded(interstitialAd: InterstitialAd) {
                     AdsSDK.adCallback.onAdLoaded(adUnitId, AdType.Inter)
                     callback?.onAdLoaded(adUnitId, AdType.Inter)
-
-                    interstitialAd.setOnPaidEventListener { adValue ->
-                        val bundle = getPaidTrackingBundle(adValue, adUnitId, "Inter", interstitialAd.responseInfo)
-                        AdsSDK.adCallback.onPaidValueListener(bundle)
-                        callback?.onPaidValueListener(bundle)
-                    }
-
                     intersLoading.remove(adUnitId)
                     inters[adUnitId] = interstitialAd
                 }
@@ -214,7 +207,11 @@ object AdmobInter {
         nextAction: () -> Unit
     ) {
         val adUnitId = interstitialAd.adUnitId
-
+        interstitialAd.setOnPaidEventListener { adValue ->
+            val bundle = getPaidTrackingBundle(adValue, adUnitId, "Inter", interstitialAd.responseInfo)
+            AdsSDK.adCallback.onPaidValueListener(bundle)
+            callback?.onPaidValueListener(bundle)
+        }
         interstitialAd.fullScreenContentCallback = object : FullScreenContentCallback() {
             override fun onAdClicked() {
                 AdsSDK.adCallback.onAdClicked(adUnitId, AdType.Inter)
@@ -256,6 +253,7 @@ object AdmobInter {
                 AdsSDK.adCallback.onAdShowedFullScreenContent(adUnitId, AdType.Inter)
                 callback?.onAdShowedFullScreenContent(adUnitId, AdType.Inter)
             }
+
         }
 
         if (nextActionDuringInterShow) {
