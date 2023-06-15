@@ -36,6 +36,9 @@ object AdsSDK {
     var isEnableOpenAds = true
         private set
 
+    var isEnableRewarded = true
+        private set
+
     private var autoLogPaidValueTrackingInSdk = false
 
 
@@ -200,6 +203,9 @@ object AdsSDK {
 
     fun setEnableOpenAds(isEnable: Boolean) {
         isEnableOpenAds = isEnable
+    }
+    fun setEnableRewarded(isEnable: Boolean) {
+        isEnableRewarded = isEnable
     }
 
     fun setAutoTrackingPaidValueInSdk(useInSDK: Boolean) {

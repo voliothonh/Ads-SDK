@@ -27,12 +27,23 @@ object AdmobRewarded {
     fun show(
         activity: AppCompatActivity,
         adUnitId: String,
+        isShowDefaultLoadingDialog: Boolean = true,
         callBack: TAdCallback? = null,
-        onFailureUserNotEarn: () -> Unit,
+        onFailureUserNotEarn: () -> Unit = {},
         onUserEarnedReward: () -> Unit
     ) {
 
-        val dialog = DialogShowLoadingAds(activity).apply { show() }
+        if (!AdsSDK.isEnableRewarded){
+            onUserEarnedReward.invoke()
+            return
+        }
+
+        var dialog : DialogShowLoadingAds? = null
+
+        if (isShowDefaultLoadingDialog){
+            dialog = DialogShowLoadingAds(activity).apply { show() }
+        }
+
 
         RewardedAd.load(
             AdsSDK.app,
@@ -45,7 +56,7 @@ object AdmobRewarded {
                     AdsSDK.adCallback.onAdFailedToLoad(adUnitId, AdType.Rewarded, error)
                     callBack?.onAdFailedToLoad(adUnitId, AdType.Rewarded, error)
                     onFailureUserNotEarn.invoke()
-                    dialog.dismiss()
+                    dialog?.dismiss()
                 }
 
                 override fun onAdLoaded(rewardedAd: RewardedAd) {
@@ -99,7 +110,7 @@ object AdmobRewarded {
                     }
 
                     activity.waitActivityResumed  {
-                        dialog.dismiss()
+                        dialog?.dismiss()
                         rewardedAd.show(activity) { _ ->
                             Log.e("ThoNH-1","onUserEarnedReward")
                             onUserEarnedReward.invoke()
