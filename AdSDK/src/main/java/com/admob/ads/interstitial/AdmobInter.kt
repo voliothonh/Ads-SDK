@@ -44,7 +44,7 @@ object AdmobInter {
      */
     fun load(adUnitId: String, callback: TAdCallback? = null) {
 
-        if (!AdsSDK.isEnableInter){
+        if (!AdsSDK.isEnableInter) {
             return
         }
 
@@ -117,6 +117,7 @@ object AdmobInter {
      * This function will fix that error.
      * We will handle nextAction while InterAd starting showing
      * @param nextActionBeforeDismiss: if set {true} => fix bug delay onDismiss of Inter usually true for activity, false for fragment
+     * @param nextActionBeforeDismissDelayTime: delay time to next action, working only nextActionBeforeDismiss == true
      *
      *
      */
@@ -124,14 +125,15 @@ object AdmobInter {
         adUnitId: String,
         showLoadingInter: Boolean = true,
         forceShow: Boolean = false,
-        nextActionBeforeDismiss : Boolean = true,
+        nextActionBeforeDismiss: Boolean = true,
+        nextActionBeforeDismissDelayTime: Long = 0,
         loadAfterDismiss: Boolean = true,
         loadIfNotAvailable: Boolean = true,
         callback: TAdCallback? = null,
         nextAction: () -> Unit
     ) {
 
-        if (!AdsSDK.isEnableInter){
+        if (!AdsSDK.isEnableInter) {
             nextAction.invoke()
             return
         }
@@ -163,10 +165,26 @@ object AdmobInter {
         } else {
             if (showLoadingInter) {
                 showLoadingBeforeInter {
-                    invokeShowInter(interAd, currActivity, loadAfterDismiss,nextActionBeforeDismiss, callback, nextAction)
+                    invokeShowInter(
+                        interAd,
+                        currActivity,
+                        loadAfterDismiss,
+                        nextActionBeforeDismiss,
+                        nextActionBeforeDismissDelayTime,
+                        callback,
+                        nextAction
+                    )
                 }
             } else {
-                invokeShowInter(interAd, currActivity, loadAfterDismiss, nextActionBeforeDismiss,callback, nextAction)
+                invokeShowInter(
+                    interAd,
+                    currActivity,
+                    loadAfterDismiss,
+                    nextActionBeforeDismiss,
+                    nextActionBeforeDismissDelayTime,
+                    callback,
+                    nextAction
+                )
             }
         }
     }
@@ -192,13 +210,15 @@ object AdmobInter {
         interstitialAd: InterstitialAd,
         activity: Activity,
         loadAfterDismiss: Boolean,
-        nextActionBeforeDismiss : Boolean = true,
+        nextActionBeforeDismiss: Boolean = true,
+        nextActionBeforeDismissDelayTime: Long = 0,
         callback: TAdCallback? = null,
         nextAction: () -> Unit
     ) {
         val adUnitId = interstitialAd.adUnitId
         interstitialAd.setOnPaidEventListener { adValue ->
-            val bundle = getPaidTrackingBundle(adValue, adUnitId, "Inter", interstitialAd.responseInfo)
+            val bundle =
+                getPaidTrackingBundle(adValue, adUnitId, "Inter", interstitialAd.responseInfo)
             AdsSDK.adCallback.onPaidValueListener(bundle)
             callback?.onPaidValueListener(bundle)
         }
@@ -247,7 +267,7 @@ object AdmobInter {
         }
 
         if (nextActionBeforeDismiss) {
-            delay(250) {
+            delay(nextActionBeforeDismissDelayTime) {
                 nextAction.invoke()
             }
         }
