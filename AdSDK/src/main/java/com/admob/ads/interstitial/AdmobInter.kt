@@ -37,27 +37,6 @@ object AdmobInter {
 
     private var timeShowLoading = 1_000
 
-    private var nextActionDuringInterShow = false
-    private var timeToActionAfterShowInter = 300
-
-    /**
-     * Config when show InterAd.
-     * Usually we will take the next action after Inter dismiss
-     * But InterAd's onDismissFullContent is suffering from a callback bug that is several hundred milliseconds late.
-     * Therefore, the screen change delay is not happening as expected.
-     * This function will fix that error.
-     * We will handle nextAction while InterAd starting showing
-     * @param handleNextActionDuringInterShow: if set {true} => fix bug delay onDismiss of Inter
-     * @param delayTimeToActionAfterShowInter: time to delay start from showInter. Recommend 0 if startActivity , 300 with navigateFragment
-     */
-    fun setNextWhileInterShowing(
-        handleNextActionDuringInterShow: Boolean,
-        delayTimeToActionAfterShowInter: Int = 300
-    ) {
-        nextActionDuringInterShow = handleNextActionDuringInterShow
-        timeToActionAfterShowInter = delayTimeToActionAfterShowInter
-    }
-
     /**
      * Step1: Không có mạng => Không load
      * Step2: Có sẵn quảng cáo => Không load
@@ -131,11 +110,21 @@ object AdmobInter {
      * @param loadIfNotAvailable: try to load if InterAd not available yet
      * @param callback: callback
      * @param nextAction: callback for your work, always call whether the InterAd display is successful or not
+     *
+     * Usually we will take the next action after Inter dismiss
+     * But InterAd's onDismissFullContent is suffering from a callback bug that is several hundred milliseconds late.
+     * Therefore, the screen change delay is not happening as expected.
+     * This function will fix that error.
+     * We will handle nextAction while InterAd starting showing
+     * @param nextActionBeforeDismiss: if set {true} => fix bug delay onDismiss of Inter usually true for activity, false for fragment
+     *
+     *
      */
     fun show(
         adUnitId: String,
         showLoadingInter: Boolean = true,
         forceShow: Boolean = false,
+        nextActionBeforeDismiss : Boolean = true,
         loadAfterDismiss: Boolean = true,
         loadIfNotAvailable: Boolean = true,
         callback: TAdCallback? = null,
@@ -174,10 +163,10 @@ object AdmobInter {
         } else {
             if (showLoadingInter) {
                 showLoadingBeforeInter {
-                    invokeShowInter(interAd, currActivity, loadAfterDismiss, callback, nextAction)
+                    invokeShowInter(interAd, currActivity, loadAfterDismiss,nextActionBeforeDismiss, callback, nextAction)
                 }
             } else {
-                invokeShowInter(interAd, currActivity, loadAfterDismiss, callback, nextAction)
+                invokeShowInter(interAd, currActivity, loadAfterDismiss, nextActionBeforeDismiss,callback, nextAction)
             }
         }
     }
@@ -203,6 +192,7 @@ object AdmobInter {
         interstitialAd: InterstitialAd,
         activity: Activity,
         loadAfterDismiss: Boolean,
+        nextActionBeforeDismiss : Boolean = true,
         callback: TAdCallback? = null,
         nextAction: () -> Unit
     ) {
@@ -225,7 +215,7 @@ object AdmobInter {
 
                 interTimeShown[adUnitId] = System.currentTimeMillis()
 
-                if (!nextActionDuringInterShow) {
+                if (!nextActionBeforeDismiss) {
                     nextAction.invoke()
                 }
 
@@ -256,8 +246,8 @@ object AdmobInter {
 
         }
 
-        if (nextActionDuringInterShow) {
-            delay(timeToActionAfterShowInter) {
+        if (nextActionBeforeDismiss) {
+            delay(250) {
                 nextAction.invoke()
             }
         }

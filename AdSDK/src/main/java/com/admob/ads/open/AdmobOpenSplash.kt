@@ -1,5 +1,6 @@
 package com.admob.ads.open
 
+import android.os.Bundle
 import android.os.CountDownTimer
 import com.admob.AdType
 import com.admob.TAdCallback
@@ -25,6 +26,7 @@ object AdmobOpenSplash {
         adUnitId: String,
         timeout: Long,
         onAdLoaded: () -> Unit = {},
+        onPaidValueListener : (Bundle) -> Unit,
         nextAction: () -> Unit
     ) {
 
@@ -57,6 +59,11 @@ object AdmobOpenSplash {
                 super.onAdDismissedFullScreenContent(adUnit, adType)
                 timer?.cancel()
                 onNextActionWhenResume(nextAction)
+            }
+
+            override fun onPaidValueListener(bundle: Bundle) {
+                super.onPaidValueListener(bundle)
+                onPaidValueListener.invoke(bundle)
             }
         }
 
