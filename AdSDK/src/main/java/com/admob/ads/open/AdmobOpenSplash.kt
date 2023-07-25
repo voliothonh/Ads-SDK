@@ -30,6 +30,16 @@ object AdmobOpenSplash {
         nextAction: () -> Unit
     ) {
 
+        var isNextActionExecuted = false
+
+        fun callNextAction(){
+            if (isNextActionExecuted){
+                isNextActionExecuted = true
+                return
+            }
+            onNextActionWhenResume(nextAction)
+        }
+
         if (!AdsSDK.isEnableOpenAds) {
             onAdLoaded.invoke()
             nextAction.invoke()
@@ -46,19 +56,19 @@ object AdmobOpenSplash {
             override fun onAdFailedToLoad(adUnit: String, adType: AdType, error: LoadAdError) {
                 super.onAdFailedToLoad(adUnit, adType, error)
                 timer?.cancel()
-                onNextActionWhenResume(nextAction)
+                callNextAction()
             }
 
             override fun onAdFailedToShowFullScreenContent(adUnit: String, adType: AdType) {
                 super.onAdFailedToShowFullScreenContent(adUnit, adType)
                 timer?.cancel()
-                onNextActionWhenResume(nextAction)
+                callNextAction()
             }
 
             override fun onAdDismissedFullScreenContent(adUnit: String, adType: AdType) {
                 super.onAdDismissedFullScreenContent(adUnit, adType)
                 timer?.cancel()
-                onNextActionWhenResume(nextAction)
+                callNextAction()
             }
 
             override fun onPaidValueListener(bundle: Bundle) {
@@ -98,7 +108,7 @@ object AdmobOpenSplash {
 
             override fun onFinish() {
                 timer?.cancel()
-                onNextActionWhenResume(nextAction)
+                callNextAction()
             }
         }.start()
     }
