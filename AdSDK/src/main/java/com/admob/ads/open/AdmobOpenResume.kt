@@ -48,7 +48,16 @@ object AdmobOpenResume {
         }
 
         if (appOpenAd == null && !isAppOpenAdLoading) {
-            AdmobOpen.load(adUnitId)
+            AdmobOpen.load(
+                adUnitId,
+                onAdLoadFailure = {
+                    isAppOpenAdLoading = false
+                    appOpenAd = null
+                },
+                onAdLoaded = {
+                    isAppOpenAdLoading = false
+                    appOpenAd = it
+                })
             return
         }
 
