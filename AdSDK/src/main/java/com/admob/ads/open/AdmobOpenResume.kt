@@ -14,15 +14,17 @@ object AdmobOpenResume {
     internal lateinit var adUnitId: String
 
     private var appOpenAd: AppOpenAd? = null
+    private var mCallback: TAdCallback? = null
     private var isAppOpenAdShowing = false
     private var isAppOpenAdLoading = false
 
     fun load(id: String, callback: TAdCallback? = null) {
         adUnitId = id
+        mCallback = callback
         isAppOpenAdLoading = true
         AdmobOpen.load(
             adUnitId,
-            callback,
+            mCallback,
             onAdLoadFailure = {
                 isAppOpenAdLoading = false
 
@@ -57,7 +59,8 @@ object AdmobOpenResume {
                 onAdLoaded = {
                     isAppOpenAdLoading = false
                     appOpenAd = it
-                })
+                },
+                callback = mCallback)
             return
         }
 

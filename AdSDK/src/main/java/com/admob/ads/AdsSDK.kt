@@ -51,7 +51,7 @@ object AdsSDK {
             super.onAdClicked(adUnit, adType)
             outsideAdCallback?.onAdClicked(adUnit, adType)
             adLogger(adType, adUnit, "onAdClicked")
-            logAdClicked(adType)
+            logAdClicked(adType, adUnit)
         }
 
         override fun onAdClosed(adUnit: String, adType: AdType) {
