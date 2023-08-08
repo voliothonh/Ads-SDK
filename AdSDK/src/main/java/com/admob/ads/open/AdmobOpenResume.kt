@@ -113,7 +113,7 @@ object AdmobOpenResume {
                                 dialog.dismiss()
                             }
 
-                            load(adUnitId)
+                            load(adUnitId, callback = mCallback)
                         }
                     }
                 )
