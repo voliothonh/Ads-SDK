@@ -87,6 +87,7 @@ object AdmobInterFloor {
                 override fun onAdDismissedFullScreenContent(adUnit: String, adType: AdType) {
                     super.onAdDismissedFullScreenContent(adUnit, adType)
                     callback?.onAdDismissedFullScreenContent(adUnit, adType)
+                    load()
                 }
 
                 override fun onAdShowedFullScreenContent(adUnit: String, adType: AdType) {
