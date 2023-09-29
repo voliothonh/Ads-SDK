@@ -60,7 +60,8 @@ object AdmobOpenResume {
                     isAppOpenAdLoading = false
                     appOpenAd = it
                 },
-                callback = mCallback)
+                callback = mCallback
+            )
             return
         }
 
@@ -109,6 +110,7 @@ object AdmobOpenResume {
                             isAppOpenAdShowing = false
                             AdmobOpenResume.appOpenAd = null
                             isAppOpenAdLoading = false
+
                             if (dialog.isShowing) {
                                 dialog.dismiss()
                             }
