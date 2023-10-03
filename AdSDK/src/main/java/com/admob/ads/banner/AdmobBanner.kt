@@ -233,6 +233,7 @@ object AdmobBanner {
             try {
                 banners.forEach { (_, adView) ->
                     val viewGroup = adView?.parent as? ViewGroup
+                    adView?.destroy()
                     viewGroup?.removeAllViews()
                     viewGroup?.isVisible = false
                 }
