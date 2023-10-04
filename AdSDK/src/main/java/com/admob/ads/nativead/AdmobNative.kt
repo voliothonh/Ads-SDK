@@ -86,7 +86,8 @@ object AdmobNative {
                         adContainer,
                         nativeAd,
                         nativeContentLayoutId,
-                        adUnitId
+                        adUnitId,
+                        callback
                     )
                 }
             }
@@ -99,7 +100,8 @@ object AdmobNative {
                             adContainer,
                             nativeAd,
                             nativeContentLayoutId,
-                            adUnitId
+                            adUnitId,
+                            callback
                         )
                     }
                 })
@@ -109,7 +111,8 @@ object AdmobNative {
                     adContainer,
                     nativeAd,
                     nativeContentLayoutId,
-                    adUnitId
+                    adUnitId,
+                    callback
                 )
 
                 // Nếu forceRefresh thì load quảng cáo mới
@@ -120,7 +123,8 @@ object AdmobNative {
                                 adContainer,
                                 nativeAd,
                                 nativeContentLayoutId,
-                                adUnitId
+                                adUnitId,
+                                callback
                             )
                         }
                     })
@@ -144,11 +148,7 @@ object AdmobNative {
                 natives[adUnitId]?.destroy()
                 natives[adUnitId] = ad
                 nativesLoading[adUnitId]?.forNativeAd(adUnitId, ad)
-                ad.setOnPaidEventListener { adValue ->
-                    val bundle = getPaidTrackingBundle(adValue, adUnitId, "Native", ad.responseInfo)
-                    AdsSDK.adCallback.onPaidValueListener(bundle)
-                    callback?.onPaidValueListener(bundle)
-                }
+
             }
             .withAdListener(object : AdListener() {
                 override fun onAdFailedToLoad(adError: LoadAdError) {
@@ -201,9 +201,15 @@ object AdmobNative {
         viewGroup: ViewGroup,
         nativeAd: NativeAd,
         @LayoutRes nativeContentLayoutId: Int,
-        adUnitId: String
+        adUnitId: String,
+        callback: TAdCallback?
     ) {
         try {
+            nativeAd.setOnPaidEventListener { adValue ->
+                val bundle = getPaidTrackingBundle(adValue, adUnitId, "Native", nativeAd.responseInfo)
+                AdsSDK.adCallback.onPaidValueListener(bundle)
+                callback?.onPaidValueListener(bundle)
+            }
             val contentNativeView = LayoutInflater
                 .from(viewGroup.context)
                 .inflate(nativeContentLayoutId, null, false)
