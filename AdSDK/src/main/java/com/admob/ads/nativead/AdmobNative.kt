@@ -40,7 +40,7 @@ object AdmobNative {
     private val nativesLoading = mutableMapOf<String, INativeLoadCallback>()
 
     fun loadOnly(adUnitId: String) {
-        if (!AdsSDK.isEnableNative){
+        if (!AdsSDK.isEnableNative) {
             return
         }
 
@@ -62,7 +62,7 @@ object AdmobNative {
         callback: TAdCallback? = null
     ) {
 
-        if (!AdsSDK.isEnableNative){
+        if (!AdsSDK.isEnableNative) {
             adContainer.removeAllViews()
             adContainer.isVisible = false
             return
@@ -223,6 +223,21 @@ object AdmobNative {
 
             contentNativeView.parent?.let {
                 (it as ViewGroup).removeView(contentNativeView)
+            }
+
+            try {
+                if (nativeAd.responseInfo?.adapterResponses?.find { it.adapterClassName == "com.google.ads.mediation.facebook.FacebookMediationAdapter" } != null){
+                    contentNativeView.isSaveEnabled = false
+                    contentNativeView.isSaveFromParentEnabled = false
+
+                    unifiedNativeAdView.isSaveEnabled = false
+                    unifiedNativeAdView.isSaveFromParentEnabled = false
+
+                    viewGroup.isSaveEnabled = false
+                    viewGroup.isSaveFromParentEnabled = false
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
 
             unifiedNativeAdView.addView(contentNativeView)

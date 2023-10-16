@@ -14,11 +14,14 @@ import com.admob.ads.banner.AdmobBanner
 import com.admob.ads.interstitial.AdmobInterResume
 import com.admob.ads.nativead.AdmobNative
 import com.admob.ads.open.AdmobOpenResume
+import com.admob.delay
 import com.admob.logAdClicked
 import com.admob.logParams
+import com.facebook.ads.AudienceNetworkAds
 import com.google.android.gms.ads.AdActivity
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.MobileAds
 
 object AdsSDK {
 
@@ -167,6 +170,12 @@ object AdsSDK {
         app = application
         ProcessLifecycleOwner.get().lifecycle.addObserver(applicationStateObserver)
         application.registerActivityLifecycleCallbacks(activityLifecycleCallbacks)
+
+        delay(1000) {
+            MobileAds.initialize(application)
+            AudienceNetworkAds.initialize(application)
+        }
+
         return this
     }
 
