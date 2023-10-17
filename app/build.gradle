@@ -11,8 +11,8 @@ android {
         applicationId "com.vn.ads.sample"
         minSdk 24
         targetSdk 33
-        versionCode 1
-        versionName "1.0"
+        versionCode 119
+        versionName "1.1.9"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
