@@ -16,6 +16,7 @@ import com.admob.ads.nativead.AdmobNative
 import com.admob.ads.open.AdmobOpenResume
 import com.admob.delay
 import com.admob.logAdClicked
+import com.admob.logAdError
 import com.admob.logParams
 import com.facebook.ads.AudienceNetworkAds
 import com.google.android.gms.ads.AdActivity
@@ -47,9 +48,27 @@ object AdsSDK {
 
     private var outsideAdCallback: TAdCallback? = null
 
+
     private var preventShowResumeAd = false
 
+    /**
+     * Mark loading time
+     *  [String] => AdUnitId
+     *  [Long] => Start time loading
+     *  [Long] => End time loading
+     */
+    private var adUnitLoadingTime = mutableMapOf<String, Pair<Long, Long>>()
+
     val adCallback: TAdCallback = object : TAdCallback {
+
+        override fun onAdStartLoading(adUnit: String, adType: AdType) {
+            super.onAdStartLoading(adUnit, adType)
+            adLogger(adType, adUnit, "onAdStartLoading")
+
+            // Đánh dấu thời gian bắt đầu load quảng cáo
+            markAdStartLoading(adUnit)
+        }
+
         override fun onAdClicked(adUnit: String, adType: AdType) {
             super.onAdClicked(adUnit, adType)
             outsideAdCallback?.onAdClicked(adUnit, adType)
@@ -61,12 +80,18 @@ object AdsSDK {
             super.onAdClosed(adUnit, adType)
             outsideAdCallback?.onAdClosed(adUnit, adType)
             adLogger(adType, adUnit, "onAdClosed")
+
+            // Reset đánh dấu quảng cáo
+            adUnitLoadingTime[adUnit] = Pair(0, 0)
         }
 
         override fun onAdDismissedFullScreenContent(adUnit: String, adType: AdType) {
             super.onAdDismissedFullScreenContent(adUnit, adType)
             outsideAdCallback?.onAdDismissedFullScreenContent(adUnit, adType)
             adLogger(adType, adUnit, "onAdDismissedFullScreenContent")
+
+            // Reset đánh dấu quảng cáo
+            adUnitLoadingTime[adUnit] = Pair(0, 0)
         }
 
         override fun onAdShowedFullScreenContent(adUnit: String, adType: AdType) {
@@ -75,16 +100,36 @@ object AdsSDK {
             adLogger(adType, adUnit, "onAdShowedFullScreenContent")
         }
 
-        override fun onAdFailedToShowFullScreenContent(adUnit: String, adType: AdType) {
-            super.onAdFailedToShowFullScreenContent(adUnit, adType)
-            outsideAdCallback?.onAdFailedToShowFullScreenContent(adUnit, adType)
+        override fun onAdFailedToShowFullScreenContent(error : String, adUnit: String, adType: AdType) {
+            super.onAdFailedToShowFullScreenContent(error, adUnit, adType)
+            outsideAdCallback?.onAdFailedToShowFullScreenContent(error, adUnit, adType)
             adLogger(adType, adUnit, "onAdFailedToShowFullScreenContent")
+
+
+            val loadingTime = getAdLoadingTime(adUnit)
+            logAdError(
+                error,
+                adUnit,
+                adType,
+                loadingTime
+            )
         }
 
         override fun onAdFailedToLoad(adUnit: String, adType: AdType, error: LoadAdError) {
             super.onAdFailedToLoad(adUnit, adType, error)
             outsideAdCallback?.onAdFailedToLoad(adUnit, adType, error)
             adLogger(adType, adUnit, "onAdFailedToLoad(${error.code} - ${error.message})")
+
+
+            // Đánh dấu thời gian bắt đầu load xong quảng cáo (load bị lỗi)
+            markAdEndLoading(adUnit)
+            val loadingTime = getAdLoadingTime(adUnit)
+            logAdError(
+                error.message,
+                adUnit,
+                adType,
+                loadingTime
+            )
         }
 
         override fun onAdImpression(adUnit: String, adType: AdType) {
@@ -97,6 +142,10 @@ object AdsSDK {
             super.onAdLoaded(adUnit, adType)
             outsideAdCallback?.onAdLoaded(adUnit, adType)
             adLogger(adType, adUnit, "onAdLoaded")
+
+
+            // Đánh dấu thời gian bắt đầu load xong quảng cáo (load bị lỗi)
+            markAdEndLoading(adUnit)
         }
 
         override fun onAdOpened(adUnit: String, adType: AdType) {
@@ -213,6 +262,7 @@ object AdsSDK {
     fun setEnableOpenAds(isEnable: Boolean) {
         isEnableOpenAds = isEnable
     }
+
     fun setEnableRewarded(isEnable: Boolean) {
         isEnableRewarded = isEnable
     }
@@ -223,6 +273,26 @@ object AdsSDK {
 
     internal fun defaultAdRequest(): AdRequest {
         return AdRequest.Builder().build()
+    }
+
+    private fun markAdStartLoading(adUnitId: String){
+        adUnitLoadingTime[adUnitId] = Pair(System.currentTimeMillis(), 0)
+    }
+
+    private fun markAdEndLoading(adUnitId: String){
+        val pairStartEndTime = adUnitLoadingTime[adUnitId]
+        pairStartEndTime ?: return
+        val startAdLoadingTime = pairStartEndTime.first
+        adUnitLoadingTime[adUnitId] = Pair(startAdLoadingTime, System.currentTimeMillis())
+    }
+
+    internal fun getAdLoadingTime(adUnitId: String): Long {
+        val pairStartEndTime = adUnitLoadingTime[adUnitId]
+        pairStartEndTime ?: return -1
+
+        val startAdLoadingTime = pairStartEndTime.first
+        val endAdLoadingTime = pairStartEndTime.second
+        return endAdLoadingTime - startAdLoadingTime
     }
 
 }

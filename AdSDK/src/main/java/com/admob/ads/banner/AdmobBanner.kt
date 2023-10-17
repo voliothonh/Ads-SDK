@@ -123,6 +123,9 @@ object AdmobBanner {
                 it.setAdSize(adSize)
                 it.setAdCallback(it, callback) { addExistBanner(adContainer, it) }
                 it.loadAd(getAdRequest(bannerType))
+
+                AdsSDK.adCallback.onAdStartLoading(adUnitId, AdType.Banner)
+                callback?.onAdStartLoading(adUnitId, AdType.Banner)
             }
         }
 

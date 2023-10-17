@@ -45,13 +45,16 @@ object AdmobRewarded {
         }
 
 
+        AdsSDK.adCallback.onAdStartLoading(adUnitId, AdType.Rewarded)
+        callBack?.onAdStartLoading(adUnitId, AdType.Native)
+
         RewardedAd.load(
             AdsSDK.app,
             adUnitId,
             AdsSDK.defaultAdRequest(),
             object : RewardedAdLoadCallback() {
                 override fun onAdFailedToLoad(error: LoadAdError) {
-                            Log.e("ThoNH-1","onAdFailedToLoad")
+                    Log.e("ThoNH-1","onAdFailedToLoad")
                     super.onAdFailedToLoad(error)
                     AdsSDK.adCallback.onAdFailedToLoad(adUnitId, AdType.Rewarded, error)
                     callBack?.onAdFailedToLoad(adUnitId, AdType.Rewarded, error)
@@ -60,7 +63,7 @@ object AdmobRewarded {
                 }
 
                 override fun onAdLoaded(rewardedAd: RewardedAd) {
-                            Log.e("ThoNH-1","onAdLoaded")
+                    Log.e("ThoNH-1","onAdLoaded")
                     super.onAdLoaded(rewardedAd)
                     AdsSDK.adCallback.onAdLoaded(adUnitId, AdType.Rewarded)
                     callBack?.onAdLoaded(adUnitId, AdType.Rewarded)
@@ -89,8 +92,8 @@ object AdmobRewarded {
                         override fun onAdFailedToShowFullScreenContent(error: AdError) {
                             Log.e("ThoNH-1","onAdFailedToShowFullScreenContent")
                             super.onAdFailedToShowFullScreenContent(error)
-                            AdsSDK.adCallback.onAdFailedToShowFullScreenContent(adUnitId, AdType.Rewarded)
-                            callBack?.onAdFailedToShowFullScreenContent(adUnitId, AdType.Rewarded)
+                            AdsSDK.adCallback.onAdFailedToShowFullScreenContent(adUnitId,  error.message,AdType.Rewarded)
+                            callBack?.onAdFailedToShowFullScreenContent(adUnitId,  error.message, AdType.Rewarded)
                             onFailureUserNotEarn.invoke()
                         }
 

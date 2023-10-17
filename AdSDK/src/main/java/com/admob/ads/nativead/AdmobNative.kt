@@ -195,6 +195,9 @@ object AdmobNative {
             .build()
         nativesLoading[adUnitId] = nativeLoadCallback
         adLoader.loadAd(AdRequest.Builder().build())
+
+        AdsSDK.adCallback.onAdStartLoading(adUnitId, AdType.Native)
+        callback?.onAdStartLoading(adUnitId, AdType.Native)
     }
 
     private fun fillNative(

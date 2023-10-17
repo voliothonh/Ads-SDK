@@ -75,8 +75,12 @@ object AdmobNativeFloor {
                     callback?.onAdShowedFullScreenContent(adUnit, adType)
                 }
 
-                override fun onAdFailedToShowFullScreenContent(adUnit: String, adType: AdType) {
-                    callback?.onAdFailedToShowFullScreenContent(adUnit, adType)
+                override fun onAdFailedToShowFullScreenContent(
+                    error: String,
+                    adUnit: String,
+                    adType: AdType
+                ) {
+                    callback?.onAdFailedToShowFullScreenContent(error, adUnit, adType)
                 }
 
                 override fun onAdFailedToLoad(adUnit: String, adType: AdType, error: LoadAdError) {

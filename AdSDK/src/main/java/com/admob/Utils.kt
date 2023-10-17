@@ -1,13 +1,16 @@
 package com.admob
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.Context.CONNECTIVITY_SERVICE
 import android.content.res.Resources
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.os.Handler
+import android.telephony.TelephonyManager
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
@@ -20,9 +23,12 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.fragment.NavHostFragment
 import com.admob.ads.AdsSDK
 import com.admob.ads.databinding.AdLoadingViewBinding
+import com.admob.ads.open.AdmobOpenResume
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdValue
+import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.ResponseInfo
+import java.util.Locale
 
 
 val displayMetrics: DisplayMetrics get() = Resources.getSystem().displayMetrics
@@ -40,6 +46,33 @@ val adaptiveBannerSize: AdSize
         return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(AdsSDK.app, adWidth)
     }
 
+fun logAdError(adError: String, adId: String, adType: AdType, loadingTime: Long) {
+
+    val adFormat = when (adType) {
+        AdType.OpenApp -> {
+            if (adId == AdmobOpenResume.adUnitId) {
+                "ad_open_ads_resume"
+            } else {
+                "ad_open_ads"
+            }
+        }
+
+        AdType.Inter -> "ad_interstitial"
+        AdType.Banner -> "ad_banner"
+        AdType.Native -> "ad_native"
+        AdType.Rewarded -> "ad_rewarded"
+    }
+
+    logParams("ad_error") {
+        param("ad_unit_id", adId)
+        param("ad_format", adFormat)
+        param("loading_time", "$loadingTime")
+        param("error_reason", adError.replace(" ", "_").take(100))
+        param("country_code", Locale.getDefault().country)
+        param("network_type", getNetwork())
+    }
+}
+
 fun getPaidTrackingBundle(
     adValue: AdValue,
     adId: String,
@@ -47,11 +80,17 @@ fun getPaidTrackingBundle(
     responseInfo: ResponseInfo?
 ): Bundle {
     return Bundle().apply {
+
+        val loadingTime = AdsSDK.getAdLoadingTime(adId)
+
         putString("ad_unit_id", adId)
         putString("ad_type", adType)
         putString("revenue_micros", "${adValue.valueMicros}")
         putString("currency_code", adValue.currencyCode)
         putString("precision_type", "${adValue.precisionType}")
+        putString("loading_time", "$loadingTime")
+        putString("country_code", Locale.getDefault().country)
+        putString("network_type", getNetwork())
         val adapterResponseInfo = responseInfo?.loadedAdapterResponseInfo
 
         adapterResponseInfo?.let {
@@ -276,4 +315,47 @@ fun adLogger(
     message: String
 ) {
     Log.i("AdsSDK.ThoNH.[$adType]", "[$adUnitId] => $message")
+}
+
+
+@SuppressLint("MissingPermission")
+fun getNetwork(): String {
+    val connectivityManager =
+        AdsSDK.app.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+    val nw = connectivityManager.activeNetwork ?: return "-"
+    val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return "-"
+    when {
+        actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> return "WIFI"
+        actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> return "ETHERNET"
+        actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
+            val tm = AdsSDK.app.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+            when (tm.dataNetworkType) {
+                TelephonyManager.NETWORK_TYPE_GPRS,
+                TelephonyManager.NETWORK_TYPE_EDGE,
+                TelephonyManager.NETWORK_TYPE_CDMA,
+                TelephonyManager.NETWORK_TYPE_1xRTT,
+                TelephonyManager.NETWORK_TYPE_IDEN,
+                TelephonyManager.NETWORK_TYPE_GSM -> return "2G"
+
+                TelephonyManager.NETWORK_TYPE_UMTS,
+                TelephonyManager.NETWORK_TYPE_EVDO_0,
+                TelephonyManager.NETWORK_TYPE_EVDO_A,
+                TelephonyManager.NETWORK_TYPE_HSDPA,
+                TelephonyManager.NETWORK_TYPE_HSUPA,
+                TelephonyManager.NETWORK_TYPE_HSPA,
+                TelephonyManager.NETWORK_TYPE_EVDO_B,
+                TelephonyManager.NETWORK_TYPE_EHRPD,
+                TelephonyManager.NETWORK_TYPE_HSPAP,
+                TelephonyManager.NETWORK_TYPE_TD_SCDMA -> return "3G"
+
+                TelephonyManager.NETWORK_TYPE_LTE,
+                TelephonyManager.NETWORK_TYPE_IWLAN, 19 -> return "4G"
+
+                TelephonyManager.NETWORK_TYPE_NR -> return "5G"
+                else -> return "_"
+            }
+        }
+
+        else -> return "?"
+    }
 }

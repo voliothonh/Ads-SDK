@@ -62,6 +62,9 @@ object AdmobInter {
 
         intersLoading.add(adUnitId)
 
+        AdsSDK.adCallback.onAdStartLoading(adUnitId, AdType.Inter)
+        callback?.onAdStartLoading(adUnitId, AdType.Inter)
+
         InterstitialAd.load(AdsSDK.app,
             adUnitId,
             AdRequest.Builder().build(),

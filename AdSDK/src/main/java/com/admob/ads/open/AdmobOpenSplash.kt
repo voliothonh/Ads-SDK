@@ -60,8 +60,8 @@ object AdmobOpenSplash {
                 callNextAction()
             }
 
-            override fun onAdFailedToShowFullScreenContent(adUnit: String, adType: AdType) {
-                super.onAdFailedToShowFullScreenContent(adUnit, adType)
+            override fun onAdFailedToShowFullScreenContent(error : String,adUnit: String, adType: AdType) {
+                super.onAdFailedToShowFullScreenContent(error, adUnit, adType)
                 timer?.cancel()
                 callNextAction()
             }
@@ -191,8 +191,8 @@ object AdmobOpenSplash {
                 }
             }
 
-            override fun onAdFailedToShowFullScreenContent(adUnit: String, adType: AdType) {
-                super.onAdFailedToShowFullScreenContent(adUnit, adType)
+            override fun onAdFailedToShowFullScreenContent(error : String,adUnit: String, adType: AdType) {
+                super.onAdFailedToShowFullScreenContent(error, adUnit, adType)
                 timer?.cancel()
                 callNextAction()
             }

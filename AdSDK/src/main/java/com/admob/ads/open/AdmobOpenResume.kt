@@ -90,10 +90,11 @@ object AdmobOpenResume {
                         }
 
                         override fun onAdFailedToShowFullScreenContent(
+                            error : String,
                             adUnit: String,
                             adType: AdType
                         ) {
-                            super.onAdFailedToShowFullScreenContent(adUnit, adType)
+                            super.onAdFailedToShowFullScreenContent(error, adUnit, adType)
                             isAppOpenAdShowing = false
                             AdmobOpenResume.appOpenAd = null
                             isAppOpenAdLoading = false

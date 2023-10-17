@@ -4,7 +4,6 @@ import android.os.CountDownTimer
 import com.admob.AdType
 import com.admob.TAdCallback
 import com.admob.ads.AdsSDK
-import com.admob.ads.open.AdmobOpenSplash
 import com.admob.getAppCompatActivityOnTop
 import com.admob.onNextActionWhenResume
 import com.admob.waitActivityResumed
@@ -26,7 +25,7 @@ object AdmobInterSplash {
         nextAction: () -> Unit
     ) {
 
-        if (!AdsSDK.isEnableInter){
+        if (!AdsSDK.isEnableInter) {
             nextAction.invoke()
             return
         }
@@ -38,8 +37,12 @@ object AdmobInterSplash {
                 onNextActionWhenResume(nextAction)
             }
 
-            override fun onAdFailedToShowFullScreenContent(adUnit: String, adType: AdType) {
-                super.onAdFailedToShowFullScreenContent(adUnit, adType)
+            override fun onAdFailedToShowFullScreenContent(
+                error: String,
+                adUnit: String,
+                adType: AdType
+            ) {
+                super.onAdFailedToShowFullScreenContent(error, adUnit, adType)
                 timer?.cancel()
                 onNextActionWhenResume(nextAction)
             }

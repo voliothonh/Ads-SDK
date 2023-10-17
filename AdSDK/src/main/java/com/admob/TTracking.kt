@@ -1,5 +1,6 @@
 package com.admob
 
+import android.util.Log
 import com.admob.ads.AdsSDK
 import com.admob.ads.open.AdmobOpenResume
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -51,19 +52,34 @@ fun logAdImpression(adTag: String) {
 
 fun logEvent(evenName: String) {
     val result = evenName.trim().replace("-", "_")
+
+    Log.e("Tracking", "logEvent: $evenName")
+
     tracker.logEvent(result, null)
 }
 
 fun logScreen(screenName: String) {
     val result = screenName.trim().replace("-", "_")
+
+    Log.e("Tracking", "logScreen: $screenName")
+
     tracker.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
         param(FirebaseAnalytics.Param.SCREEN_NAME, result)
     }
 }
 
 fun logParams(eventName: String, block: ParametersBuilder.() -> Unit) {
+
+    Log.e("Tracking", "logParams: $eventName")
+
     runCatching {
         val result = eventName.trim().replace("-", "_")
-        tracker.logEvent(result) { block() }
+        tracker.logEvent(result) {
+            block()
+
+            this.bundle.keySet().forEach {
+                Log.e("Tracking", "param: [$it = ${this.bundle.get(it)}]")
+            }
+        }
     }
 }
