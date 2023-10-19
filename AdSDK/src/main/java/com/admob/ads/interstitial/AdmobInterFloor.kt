@@ -1,8 +1,11 @@
 package com.admob.ads.interstitial
 
 import android.os.Bundle
+import android.widget.Toast
 import com.admob.AdType
 import com.admob.TAdCallback
+import com.admob.ads.AdsSDK
+import com.admob.ads.BuildConfig
 import com.google.android.gms.ads.LoadAdError
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
@@ -15,6 +18,10 @@ object AdmobInterFloor {
     private lateinit var currAdUnitLoad: String
 
 
+    /**
+     * Call this function onCreate of Application class
+     * If want to disable inter, call AdsSDK.disableInter()
+     */
     fun setAdUnitId(
         adUnitIdHigh: String,
         adUnitIdMedium: String,
@@ -27,8 +34,17 @@ object AdmobInterFloor {
     }
 
     fun load() {
-        Firebase.analytics.logEvent("Inter_Ads_Floor", null)
-        loadInterFloor(adUnitIdHigh)
+        if (::adUnitIdHigh.isInitialized) {
+            loadInterFloor(adUnitIdHigh)
+        } else {
+            if (BuildConfig.DEBUG) {
+                Toast.makeText(
+                    AdsSDK.app,
+                    "Please call setAdUnitId in Application class.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 
     private fun loadInterFloor(adUnitId: String) {

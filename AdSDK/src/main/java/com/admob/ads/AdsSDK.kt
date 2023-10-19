@@ -3,6 +3,7 @@ package com.admob.ads
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
+import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
@@ -18,6 +19,11 @@ import com.admob.delay
 import com.admob.logAdClicked
 import com.admob.logAdError
 import com.admob.logParams
+import com.appsflyer.AppsFlyerConversionListener
+import com.appsflyer.AppsFlyerLib
+import com.appsflyer.adrevenue.AppsFlyerAdRevenue
+import com.appsflyer.api.PurchaseClient
+import com.appsflyer.api.Store
 import com.facebook.ads.AudienceNetworkAds
 import com.google.android.gms.ads.AdActivity
 import com.google.android.gms.ads.AdRequest
@@ -50,6 +56,9 @@ object AdsSDK {
 
 
     private var preventShowResumeAd = false
+
+
+    internal var isEnableAppsflyer = false
 
     /**
      * Mark loading time
@@ -100,7 +109,7 @@ object AdsSDK {
             adLogger(adType, adUnit, "onAdShowedFullScreenContent")
         }
 
-        override fun onAdFailedToShowFullScreenContent(error : String, adUnit: String, adType: AdType) {
+        override fun onAdFailedToShowFullScreenContent(error: String, adUnit: String, adType: AdType) {
             super.onAdFailedToShowFullScreenContent(error, adUnit, adType)
             outsideAdCallback?.onAdFailedToShowFullScreenContent(error, adUnit, adType)
             adLogger(adType, adUnit, "onAdFailedToShowFullScreenContent")
@@ -225,6 +234,50 @@ object AdsSDK {
             AudienceNetworkAds.initialize(application)
         }
 
+        return this
+    }
+
+    fun enableAppsflyer(appsflyerId: String): AdsSDK {
+        isEnableAppsflyer = true
+        val afRevenueBuilder = AppsFlyerAdRevenue.Builder(app)
+        AppsFlyerAdRevenue.initialize(afRevenueBuilder.build())
+        AppsFlyerLib.getInstance().init(
+            appsflyerId,
+            object : AppsFlyerConversionListener {
+                override fun onConversionDataSuccess(p0: MutableMap<String, Any>?) {
+                    Log.i("AdsSDK", "AppsFlyer ==> onConversionDataSuccess($p0)")
+                }
+
+                override fun onConversionDataFail(p0: String?) {
+                    Log.i("AdsSDK", "AppsFlyer ==> onConversionDataFail($p0)")
+                }
+
+                override fun onAppOpenAttribution(p0: MutableMap<String, String>?) {
+                    Log.i("AdsSDK", "AppsFlyer ==> onAppOpenAttribution($p0)")
+                }
+
+                override fun onAttributionFailure(p0: String?) {
+                    Log.i("AdsSDK", "AppsFlyer ==> onAttributionFailure($p0")
+                }
+            },
+            app
+        )
+
+        AppsFlyerLib.getInstance().setCollectAndroidID(true)
+        AppsFlyerLib.getInstance().setCollectIMEI(true)
+        AppsFlyerLib.getInstance().setCollectOaid(true)
+        AppsFlyerLib.getInstance().start(app)
+
+        val builder = PurchaseClient.Builder(app, Store.GOOGLE)
+        val afPurchaseClient = builder.build()
+        afPurchaseClient.startObservingTransactions()
+        builder.logSubscriptions(true)
+        builder.autoLogInApps(true)
+
+
+        if (BuildConfig.DEBUG) {
+            AppsFlyerLib.getInstance().setDebugLog(true)
+        }
         return this
     }
 

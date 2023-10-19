@@ -220,8 +220,7 @@ object AdmobInter {
     ) {
         val adUnitId = interstitialAd.adUnitId
         interstitialAd.setOnPaidEventListener { adValue ->
-            val bundle =
-                getPaidTrackingBundle(adValue, adUnitId, "Inter", interstitialAd.responseInfo)
+            val bundle = getPaidTrackingBundle(adValue, adUnitId, "Inter", interstitialAd.responseInfo)
             AdsSDK.adCallback.onPaidValueListener(bundle)
             callback?.onPaidValueListener(bundle)
         }

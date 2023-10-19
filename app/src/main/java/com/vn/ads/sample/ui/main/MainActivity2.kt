@@ -1,6 +1,8 @@
 package com.vn.ads.sample.ui.main
 
 import android.os.Bundle
+import android.os.Process
+import android.util.Log
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -17,6 +19,8 @@ class MainActivity2 : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        Log.e("ThoNH","MainActivity2 onCreate: ${Process.myPid()}")
+
         binding = ActivityMain2Binding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -30,7 +34,15 @@ class MainActivity2 : AppCompatActivity() {
                 R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications
             )
         )
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
+//        setupActionBarWithNavController(navController, appBarConfiguration)
+//        navView.setupWithNavController(navController)
     }
+
+
+    override fun onResume() {
+        super.onResume()
+
+        Log.e("ThoNH","MainActivity2 onResume: ${Process.myPid()}")
+    }
+
 }

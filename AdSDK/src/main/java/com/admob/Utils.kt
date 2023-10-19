@@ -24,10 +24,13 @@ import androidx.navigation.fragment.NavHostFragment
 import com.admob.ads.AdsSDK
 import com.admob.ads.databinding.AdLoadingViewBinding
 import com.admob.ads.open.AdmobOpenResume
+import com.appsflyer.adrevenue.AppsFlyerAdRevenue
+import com.appsflyer.adrevenue.adnetworks.generic.MediationNetwork
+import com.appsflyer.adrevenue.adnetworks.generic.Scheme
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdValue
-import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.ResponseInfo
+import java.util.Currency
 import java.util.Locale
 
 
@@ -73,12 +76,39 @@ fun logAdError(adError: String, adId: String, adType: AdType, loadingTime: Long)
     }
 }
 
+fun pushAppsFlyerAdValueTracking(
+    adValue: AdValue,
+    adId: String,
+    adType: String,
+    responseInfo: ResponseInfo?
+) {
+
+    val value = adValue.valueMicros / 1000000.0
+
+    val customParams: MutableMap<String, String> = HashMap()
+    customParams[Scheme.AD_UNIT] = adId
+    customParams[Scheme.AD_TYPE] = adType
+
+    AppsFlyerAdRevenue.logAdRevenue(
+        responseInfo?.loadedAdapterResponseInfo?.adSourceName ?: "",
+        MediationNetwork.googleadmob,
+        Currency.getInstance(Locale.US),
+        value,
+        customParams
+    )
+}
+
 fun getPaidTrackingBundle(
     adValue: AdValue,
     adId: String,
     adType: String,
     responseInfo: ResponseInfo?
 ): Bundle {
+
+    if (AdsSDK.isEnableAppsflyer){
+        pushAppsFlyerAdValueTracking(adValue, adId, adType, responseInfo,)
+    }
+
     return Bundle().apply {
 
         val loadingTime = AdsSDK.getAdLoadingTime(adId)

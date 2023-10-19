@@ -78,6 +78,13 @@ dependencies {
     implementation 'com.google.ads.mediation:pangle:5.4.1.1.0'
     implementation 'com.google.ads.mediation:mintegral:16.5.11.0'
 
+    implementation 'com.facebook.android:facebook-android-sdk:latest.release'
+    implementation 'com.appsflyer:af-android-sdk:6.12.1'
+    implementation "com.android.installreferrer:installreferrer:2.2"
+    implementation 'com.appsflyer:adrevenue:6.9.0'
+    implementation 'com.appsflyer:purchase-connector:1.0.0'
+
+
 }
 
 afterEvaluate {
