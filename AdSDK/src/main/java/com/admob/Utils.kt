@@ -112,15 +112,21 @@ fun getPaidTrackingBundle(
     return Bundle().apply {
 
         val loadingTime = AdsSDK.getAdLoadingTime(adId)
+        if (loadingTime > 0) {
+            putString("loading_time", "$loadingTime")
+            AdsSDK.clearMarkLoadingTime(adId)
+        } else {
+            putString("loading_time", "time_unknown")
+        }
 
         putString("ad_unit_id", adId)
         putString("ad_type", adType)
         putString("revenue_micros", "${adValue.valueMicros}")
         putString("currency_code", adValue.currencyCode)
         putString("precision_type", "${adValue.precisionType}")
-        putString("loading_time", "$loadingTime")
         putString("country_code", Locale.getDefault().country)
         putString("network_type", getNetwork())
+
         val adapterResponseInfo = responseInfo?.loadedAdapterResponseInfo
 
         adapterResponseInfo?.let {

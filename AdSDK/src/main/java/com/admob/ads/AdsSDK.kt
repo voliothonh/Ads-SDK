@@ -348,6 +348,10 @@ object AdsSDK {
         return endAdLoadingTime - startAdLoadingTime
     }
 
+    internal fun clearMarkLoadingTime(adUnitId : String){
+        adUnitLoadingTime.remove(adUnitId)
+    }
+
 }
 
 
