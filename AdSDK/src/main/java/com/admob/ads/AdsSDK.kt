@@ -3,6 +3,7 @@ package com.admob.ads
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
+import android.os.SystemClock
 import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -66,7 +67,7 @@ object AdsSDK {
      *  [Long] => Start time loading
      *  [Long] => End time loading
      */
-    private var adUnitLoadingTime = mutableMapOf<String, Pair<Long, Long>>()
+    private var adUnitLoadingTime = mutableMapOf<String, Pair<Long, Long>?>()
 
     val adCallback: TAdCallback = object : TAdCallback {
 
@@ -91,7 +92,7 @@ object AdsSDK {
             adLogger(adType, adUnit, "onAdClosed")
 
             // Reset đánh dấu quảng cáo
-            adUnitLoadingTime[adUnit] = Pair(0, 0)
+            clearMarkLoadingTime(adUnit)
         }
 
         override fun onAdDismissedFullScreenContent(adUnit: String, adType: AdType) {
@@ -100,7 +101,7 @@ object AdsSDK {
             adLogger(adType, adUnit, "onAdDismissedFullScreenContent")
 
             // Reset đánh dấu quảng cáo
-            adUnitLoadingTime[adUnit] = Pair(0, 0)
+            clearMarkLoadingTime(adUnit)
         }
 
         override fun onAdShowedFullScreenContent(adUnit: String, adType: AdType) {
@@ -114,7 +115,7 @@ object AdsSDK {
             outsideAdCallback?.onAdFailedToShowFullScreenContent(error, adUnit, adType)
             adLogger(adType, adUnit, "onAdFailedToShowFullScreenContent")
 
-
+            markAdEndLoading(adUnit)
             val loadingTime = getAdLoadingTime(adUnit)
             logAdError(
                 error,
@@ -122,6 +123,8 @@ object AdsSDK {
                 adType,
                 loadingTime
             )
+
+            clearMarkLoadingTime(adUnit)
         }
 
         override fun onAdFailedToLoad(adUnit: String, adType: AdType, error: LoadAdError) {
@@ -139,6 +142,8 @@ object AdsSDK {
                 adType,
                 loadingTime
             )
+
+            clearMarkLoadingTime(adUnit)
         }
 
         override fun onAdImpression(adUnit: String, adType: AdType) {
@@ -329,14 +334,14 @@ object AdsSDK {
     }
 
     private fun markAdStartLoading(adUnitId: String){
-        adUnitLoadingTime[adUnitId] = Pair(System.currentTimeMillis(), 0)
+        adUnitLoadingTime[adUnitId] = Pair(SystemClock.elapsedRealtime(), 0)
     }
 
     private fun markAdEndLoading(adUnitId: String){
         val pairStartEndTime = adUnitLoadingTime[adUnitId]
         pairStartEndTime ?: return
         val startAdLoadingTime = pairStartEndTime.first
-        adUnitLoadingTime[adUnitId] = Pair(startAdLoadingTime, System.currentTimeMillis())
+        adUnitLoadingTime[adUnitId] = Pair(startAdLoadingTime, SystemClock.elapsedRealtime())
     }
 
     internal fun getAdLoadingTime(adUnitId: String): Long {
@@ -345,6 +350,15 @@ object AdsSDK {
 
         val startAdLoadingTime = pairStartEndTime.first
         val endAdLoadingTime = pairStartEndTime.second
+
+        if (startAdLoadingTime  <=0 || endAdLoadingTime <= 0){
+            return -1
+        }
+
+        if (endAdLoadingTime - startAdLoadingTime <=0 ){
+            return -1
+        }
+
         return endAdLoadingTime - startAdLoadingTime
     }
 
