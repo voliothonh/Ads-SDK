@@ -189,6 +189,11 @@ object AdsSDK {
                 }
             }
         }
+
+        override fun onSetInterFloorId() {
+            super.onSetInterFloorId()
+            outsideAdCallback?.onSetInterFloorId()
+        }
     }
 
     val activities = mutableSetOf<Activity>()

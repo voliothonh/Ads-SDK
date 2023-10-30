@@ -5,6 +5,7 @@ import com.admob.TAdCallback
 import com.admob.ads.AdsSDK
 import com.admob.getActivityOnTop
 import com.admob.getClazzOnTop
+import com.admob.topActivityIsAd
 import com.admob.ui.dialogs.DialogBackgroundOpenApp
 import com.google.android.gms.ads.AdActivity
 import com.google.android.gms.ads.appopen.AppOpenAd
@@ -70,7 +71,7 @@ object AdmobOpenResume {
         activity ?: return
 
         val clazzOnTop = AdsSDK.getClazzOnTop()
-        val adActivityOnTop = AdsSDK.getActivityOnTop() is AdActivity
+        val adActivityOnTop = AdsSDK.topActivityIsAd()
         val containClazzOnTop = AdsSDK.clazzIgnoreAdResume.contains(AdsSDK.getClazzOnTop())
         if (clazzOnTop == null || containClazzOnTop || adActivityOnTop) {
             return

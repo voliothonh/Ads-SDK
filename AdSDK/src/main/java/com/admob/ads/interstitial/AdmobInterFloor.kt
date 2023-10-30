@@ -37,6 +37,7 @@ object AdmobInterFloor {
         if (::adUnitIdHigh.isInitialized) {
             loadInterFloor(adUnitIdHigh)
         } else {
+            AdsSDK.adCallback.onSetInterFloorId()
             if (BuildConfig.DEBUG) {
                 Toast.makeText(
                     AdsSDK.app,
@@ -48,6 +49,10 @@ object AdmobInterFloor {
     }
 
     private fun loadInterFloor(adUnitId: String) {
+        if (!::adUnitIdHigh.isInitialized) {
+            AdsSDK.adCallback.onSetInterFloorId()
+            return
+        }
         currAdUnitLoad = adUnitId
         AdmobInter.load(
             currAdUnitLoad,
@@ -80,6 +85,12 @@ object AdmobInterFloor {
         callback: TAdCallback? = null,
         nextAction: () -> Unit
     ) {
+
+        if (!::adUnitIdHigh.isInitialized) {
+            AdsSDK.adCallback.onSetInterFloorId()
+            return
+        }
+
         AdmobInter.show(
             currAdUnitLoad,
             showLoadingInter,

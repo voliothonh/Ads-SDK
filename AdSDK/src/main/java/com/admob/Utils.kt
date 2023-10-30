@@ -21,12 +21,22 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.fragment.NavHostFragment
+import com.adcolony.sdk.AdColonyAdViewActivity
+import com.adcolony.sdk.AdColonyInterstitialActivity
 import com.admob.ads.AdsSDK
 import com.admob.ads.databinding.AdLoadingViewBinding
 import com.admob.ads.open.AdmobOpenResume
 import com.appsflyer.adrevenue.AppsFlyerAdRevenue
 import com.appsflyer.adrevenue.adnetworks.generic.MediationNetwork
 import com.appsflyer.adrevenue.adnetworks.generic.Scheme
+import com.bytedance.sdk.openadsdk.activity.TTBaseActivity
+import com.bytedance.sdk.openadsdk.activity.TTFullScreenExpressVideoActivity
+import com.bytedance.sdk.openadsdk.activity.TTFullScreenVideoActivity
+import com.bytedance.sdk.openadsdk.activity.TTInterstitialActivity
+import com.bytedance.sdk.openadsdk.activity.TTInterstitialExpressActivity
+import com.bytedance.sdk.openadsdk.activity.TTRewardExpressVideoActivity
+import com.bytedance.sdk.openadsdk.activity.TTRewardVideoActivity
+import com.google.android.gms.ads.AdActivity
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdValue
 import com.google.android.gms.ads.ResponseInfo
@@ -269,6 +279,22 @@ private fun Fragment.isNavHostFragment(): Boolean {
 
 fun AdsSDK.getActivityOnTop(): Activity? {
     return activities.findLast { !it.isFinishing }
+}
+
+fun AdsSDK.topActivityIsAd() : Boolean {
+    val top = getActivityOnTop()
+    return top is AdActivity
+            || top is com.vungle.ads.internal.ui.AdActivity
+            || top is AdColonyInterstitialActivity
+            || top is AdColonyAdViewActivity
+            || top is TTInterstitialExpressActivity
+            || top is TTFullScreenExpressVideoActivity
+            || top is TTInterstitialActivity
+            || top is TTRewardExpressVideoActivity
+            || top is TTRewardVideoActivity
+            || top is TTFullScreenVideoActivity
+            || top is TTBaseActivity
+
 }
 
 fun AdsSDK.getAppCompatActivityOnTop(): AppCompatActivity? {

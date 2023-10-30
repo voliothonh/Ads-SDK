@@ -4,9 +4,12 @@ import com.admob.ads.AdsSDK
 import com.admob.getActivityOnTop
 import com.admob.getAppCompatActivityOnTop
 import com.admob.getClazzOnTop
+import com.admob.topActivityIsAd
 import com.admob.ui.dialogs.DialogWelcomeBackAds
 import com.admob.waitActivityResumed
 import com.admob.waitActivityStop
+import com.bytedance.sdk.openadsdk.activity.TTBaseActivity
+import com.bytedance.sdk.openadsdk.activity.TTFullScreenExpressVideoActivity
 import com.google.android.gms.ads.AdActivity
 
 object AdmobInterResume {
@@ -30,11 +33,10 @@ object AdmobInterResume {
         }
 
         val activity = AdsSDK.getAppCompatActivityOnTop()
-
         activity ?: return
 
         val clazzOnTop = AdsSDK.getClazzOnTop()
-        val adActivityOnTop = AdsSDK.getActivityOnTop() is AdActivity
+        val adActivityOnTop = AdsSDK.topActivityIsAd()
         val containClazzOnTop = AdsSDK.clazzIgnoreAdResume.contains(AdsSDK.getClazzOnTop())
         if (clazzOnTop == null || containClazzOnTop || adActivityOnTop) {
             return

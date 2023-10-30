@@ -16,6 +16,7 @@ interface TAdCallback {
     fun onAdOpened(adUnit: String, adType: AdType) {}
     fun onAdSwipeGestureClicked(adUnit: String, adType: AdType) {}
     fun onPaidValueListener(bundle : Bundle) {}
+    fun onSetInterFloorId(){} /*When application resume, some device init all member variable, pls call set InterFloor.setId*/
 }
 
 enum class AdType {
