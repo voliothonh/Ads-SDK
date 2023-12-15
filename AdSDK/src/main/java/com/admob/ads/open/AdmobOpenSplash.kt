@@ -35,9 +35,9 @@ object AdmobOpenSplash {
 
         fun callNextAction() {
             if (isNextActionExecuted) {
-                isNextActionExecuted = true
                 return
             }
+            isNextActionExecuted = true
             onNextActionWhenResume(nextAction)
         }
 
@@ -140,9 +140,9 @@ object AdmobOpenSplash {
 
         fun callNextAction() {
             if (isNextActionExecuted) {
-                isNextActionExecuted = true
                 return
             }
+            isNextActionExecuted = true
             onNextActionWhenResume(nextAction)
         }
 

@@ -1,8 +1,14 @@
 package com.admob.ads.banner
 
 import android.os.Bundle
+import android.util.Log
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import com.admob.AdType
 import com.admob.TAdCallback
 import com.admob.adaptiveBannerSize
@@ -37,6 +43,7 @@ object AdmobBanner {
         forceRefresh: Boolean = false,
         callback: TAdCallback? = null
     ) = show(
+        null,
         adContainer,
         adUnitId,
         BannerAdSize.BannerAdaptive,
@@ -57,6 +64,7 @@ object AdmobBanner {
         forceRefresh: Boolean = false,
         callback: TAdCallback? = null
     ) = show(
+        null,
         adContainer,
         adUnitId,
         BannerAdSize.Banner300x250,
@@ -73,12 +81,14 @@ object AdmobBanner {
      * @param callback callback
      */
     fun showCollapsible(
+        lifecycle: Lifecycle? = null,
         adContainer: ViewGroup,
         adUnitId: String,
         showOnBottom: Boolean = true,
         forceRefresh: Boolean = false,
         callback: TAdCallback? = null
     ) = show(
+        lifecycle,
         adContainer,
         adUnitId,
         if (showOnBottom) BannerAdSize.BannerCollapsibleBottom else BannerAdSize.BannerCollapsibleTop,
@@ -87,6 +97,7 @@ object AdmobBanner {
     )
 
     private fun show(
+        lifecycle: Lifecycle? = null,
         adContainer: ViewGroup,
         adUnitId: String,
         bannerType: BannerAdSize,
@@ -110,6 +121,7 @@ object AdmobBanner {
 
         val adView = banners[adUnitId]
 
+
         if (adView == null || forceRefresh) {
 
             val context =
@@ -121,7 +133,9 @@ object AdmobBanner {
             AdView(context).let {
                 it.adUnitId = adUnitId
                 it.setAdSize(adSize)
-                it.setAdCallback(it, callback) { addExistBanner(adContainer, it) }
+                it.setAdCallback(it, bannerType, callback) {
+                    addExistBanner(lifecycle, adContainer, it)
+                }
                 it.loadAd(getAdRequest(bannerType))
 
                 AdsSDK.adCallback.onAdStartLoading(adUnitId, AdType.Banner)
@@ -130,9 +144,9 @@ object AdmobBanner {
         }
 
         if (adView != null) {
-            addExistBanner(adContainer, adView)
-            adView.setAdCallback(adView, callback) {
-                addExistBanner(adContainer, adView)
+            addExistBanner(lifecycle, adContainer, adView)
+            adView.setAdCallback(adView, bannerType, callback) {
+                addExistBanner(lifecycle, adContainer, adView)
             }
             return
         }
@@ -140,13 +154,33 @@ object AdmobBanner {
     }
 
 
-    private fun addExistBanner(adContainer: ViewGroup, bannerView: AdView) {
+    private fun addExistBanner(
+        lifecycle: Lifecycle?,
+        adContainer: ViewGroup,
+        bannerView: AdView
+    ) {
         adContainer.removeAllViews()
         if (bannerView.parent is ViewGroup && bannerView.parent != null) {
             (bannerView.parent as ViewGroup).removeAllViews()
         }
-
         adContainer.addView(bannerView)
+
+        lifecycle?.addObserver(object : DefaultLifecycleObserver {
+
+            override fun onStop(owner: LifecycleOwner) {
+                super.onStop(owner)
+                Log.e("DucLH----","onStop")
+            }
+
+            override fun onDestroy(owner: LifecycleOwner) {
+                super.onDestroy(owner)
+                bannerView.destroy()
+                Log.e("DucLH----","onDestroy")
+                lifecycle.removeObserver(this)
+                adContainer.removeAllViews()
+                bannerView.removeAllViews()
+            }
+        })
     }
 
     private fun addLoadingLayout(adContainer: ViewGroup, adSize: AdSize) {
@@ -186,6 +220,7 @@ object AdmobBanner {
 
     private fun AdView.setAdCallback(
         adView: AdView,
+        bannerType: BannerAdSize,
         tAdCallback: TAdCallback?,
         onAdLoaded: () -> Unit
     ) {
@@ -215,14 +250,17 @@ object AdmobBanner {
             override fun onAdLoaded() {
                 AdsSDK.adCallback.onAdLoaded(adUnitId, AdType.Banner)
                 tAdCallback?.onAdLoaded(adUnitId, AdType.Banner)
-
-
                 adView.setOnPaidEventListener { adValue ->
-                    val bundle = getPaidTrackingBundle(adValue, adUnitId, "Banner", adView.responseInfo)
+                    val bundle =
+                        getPaidTrackingBundle(adValue, adUnitId, "Banner", adView.responseInfo)
                     AdsSDK.adCallback.onPaidValueListener(bundle)
                     tAdCallback?.onPaidValueListener(bundle)
                 }
-
+                banners[adView.adUnitId]?.let {
+                    if (bannerType == BannerAdSize.BannerCollapsibleTop || bannerType == BannerAdSize.BannerCollapsibleBottom) {
+                        it.destroy()
+                    }
+                }
                 banners[adView.adUnitId] = adView
 
                 onAdLoaded.invoke()
