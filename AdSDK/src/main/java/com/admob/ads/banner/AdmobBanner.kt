@@ -167,16 +167,6 @@ object AdmobBanner {
 
         lifecycle?.addObserver(object : DefaultLifecycleObserver {
 
-            override fun onResume(owner: LifecycleOwner) {
-                super.onResume(owner)
-                bannerView.resume()
-            }
-
-            override fun onPause(owner: LifecycleOwner) {
-                super.onPause(owner)
-                bannerView.pause()
-            }
-
             override fun onStop(owner: LifecycleOwner) {
                 super.onStop(owner)
                 Log.e("DucLH----","onStop")
