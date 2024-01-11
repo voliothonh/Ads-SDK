@@ -6,8 +6,6 @@ import com.admob.ads.AdsSDK
 import com.admob.getActivityOnTop
 import com.admob.getClazzOnTop
 import com.admob.topActivityIsAd
-import com.admob.ui.dialogs.DialogBackgroundOpenApp
-import com.google.android.gms.ads.AdActivity
 import com.google.android.gms.ads.appopen.AppOpenAd
 
 object AdmobOpenResume {
@@ -78,9 +76,6 @@ object AdmobOpenResume {
         }
 
         appOpenAd?.let { appOpenAd ->
-            val dialog = DialogBackgroundOpenApp(AdsSDK.getActivityOnTop()!!)
-            if (!dialog.isShowing) {
-                dialog.show()
                 AdmobOpen.show(
                     appOpenAd,
                     callback = object : TAdCallback {
@@ -99,9 +94,7 @@ object AdmobOpenResume {
                             isAppOpenAdShowing = false
                             AdmobOpenResume.appOpenAd = null
                             isAppOpenAdLoading = false
-                            if (dialog.isShowing) {
-                                dialog.dismiss()
-                            }
+
                         }
 
                         override fun onAdDismissedFullScreenContent(
@@ -112,16 +105,11 @@ object AdmobOpenResume {
                             isAppOpenAdShowing = false
                             AdmobOpenResume.appOpenAd = null
                             isAppOpenAdLoading = false
-
-                            if (dialog.isShowing) {
-                                dialog.dismiss()
-                            }
-
                             load(adUnitId, callback = mCallback)
                         }
                     }
                 )
-            }
+
         }
     }
 }
