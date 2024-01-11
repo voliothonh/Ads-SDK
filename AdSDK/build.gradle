@@ -84,7 +84,8 @@ dependencies {
     api 'com.appsflyer:adrevenue:6.9.0'
     api 'com.appsflyer:purchase-connector:1.0.0'
 
-
+    api 'com.google.android.ump:user-messaging-platform:2.1.0'
+    api 'androidx.preference:preference:1.2.1'
 }
 
 afterEvaluate {
