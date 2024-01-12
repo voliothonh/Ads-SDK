@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import androidx.preference.PreferenceManager
 import com.admob.ads.AdsSDK
+import com.admob.ui.dialogs.DialogShowLoadingFormConsent
 import com.google.android.ump.ConsentDebugSettings
 import com.google.android.ump.ConsentRequestParameters
 import com.google.android.ump.UserMessagingPlatform
@@ -18,26 +19,25 @@ object GDPRUtils {
 
 
     fun showCMP(activity: Activity) {
+        val loading = DialogShowLoadingFormConsent(activity)
+        loading.show()
         UserMessagingPlatform.loadConsentForm(activity, {
             it.show(activity) {
-                val canRequestAds = canShowAds(activity)
-//                if (canRequestAds) {
-//                    AdsUtils.isNotConsent = false
-//                } else {
-//                    AdsUtils.isNotConsent = true
-//                }
+                loading.dismiss()
             }
         }, {
-//            dialog.dismissDialog()
+            loading.dismiss()
         })
     }
 
 
-    fun showCMP(activity: Activity, isTesting: Boolean = false,  onDone: () -> Unit) {
-
+    fun showCMP(activity: Activity, isTesting: Boolean = false, onDone: () -> Unit) {
+        val loading = DialogShowLoadingFormConsent(activity)
+        loading.show()
         if (!isGDPR(activity.application)) {
             isUserConsent = true
             onDone.invoke()
+            loading.dismiss()
             return
         }
 
@@ -57,22 +57,29 @@ object GDPRUtils {
             if (canRequestAds) {
                 isUserConsent = true
                 onDone.invoke()
+                loading.dismiss()
             } else {
                 UserMessagingPlatform.loadConsentForm(activity, {
                     it.show(activity) {
                         if (canShowAd) {
                             isUserConsent = true
                             onDone.invoke()
+                            loading.dismiss()
                         } else {
                             isUserConsent = false
                             onDone.invoke()
+                            loading.dismiss()
                         }
                     }
                 }, {
                     onDone.invoke()
+                    loading.dismiss()
                 })
             }
-        }, { _ -> onDone.invoke() })
+        }, { _ ->
+            onDone.invoke()
+            loading.dismiss()
+        })
     }
 
 
