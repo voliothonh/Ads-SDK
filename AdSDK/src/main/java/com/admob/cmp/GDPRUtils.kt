@@ -2,6 +2,10 @@ package com.admob.cmp
 
 import android.app.Activity
 import android.content.Context
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import androidx.preference.PreferenceManager
 import com.admob.ads.AdsSDK
 import com.admob.ui.dialogs.DialogShowLoadingFormConsent
@@ -18,68 +22,110 @@ object GDPRUtils {
         get() = canShowAds(AdsSDK.app)
 
 
-    fun showCMP(activity: Activity) {
-        val loading = DialogShowLoadingFormConsent(activity)
-        loading.show()
-        UserMessagingPlatform.loadConsentForm(activity, {
-            it.show(activity) {
-                loading.dismiss()
-            }
-        }, {
-            loading.dismiss()
-        })
+    fun showCMP(activity: AppCompatActivity) {
+        if (activity.lifecycle.currentState == Lifecycle.State.RESUMED) {
+            val loading = DialogShowLoadingFormConsent(activity)
+
+            activity.lifecycle.addObserver(object : DefaultLifecycleObserver {
+                override fun onDestroy(owner: LifecycleOwner) {
+                    super.onDestroy(owner)
+                    if (loading.isShowing) {
+                        loading.dismiss()
+                    }
+                }
+            })
+
+            loading.show()
+            UserMessagingPlatform.loadConsentForm(activity, {
+                it.show(activity) {
+                    if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing){
+                        loading.dismiss()
+                    }
+                }
+            }, {
+                if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing){
+                    loading.dismiss()
+                }
+            })
+        }
     }
 
 
-    fun showCMP(activity: Activity, isTesting: Boolean = false, onDone: () -> Unit) {
-        val loading = DialogShowLoadingFormConsent(activity)
-        loading.show()
-        if (!isGDPR(activity.application)) {
-            isUserConsent = true
-            onDone.invoke()
-            loading.dismiss()
-            return
-        }
+    fun showCMP(activity: AppCompatActivity, isTesting: Boolean = false, onDone: () -> Unit) {
+        if (activity.lifecycle.currentState == Lifecycle.State.RESUMED) {
+            val loading = DialogShowLoadingFormConsent(activity)
 
-        val debugSettings = ConsentDebugSettings.Builder(activity)
-            .setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA)
-            .addTestDeviceHashedId(Utils.getDeviceID(activity)).build()
 
-        val params = ConsentRequestParameters.Builder().setTagForUnderAgeOfConsent(false)
-            .setConsentDebugSettings(if (isTesting) debugSettings else null).build()
+            activity.lifecycle.addObserver(object : DefaultLifecycleObserver {
+                override fun onDestroy(owner: LifecycleOwner) {
+                    super.onDestroy(owner)
+                    if (loading.isShowing) {
+                        loading.dismiss()
+                    }
+                }
+            })
 
-        val consentInformation = UserMessagingPlatform.getConsentInformation(activity)
 
-        consentInformation.requestConsentInfoUpdate(activity, params, {
-
-            val canRequestAds = canShowAds(activity)
-
-            if (canRequestAds) {
+            loading.show()
+            if (!isGDPR(activity.application)) {
                 isUserConsent = true
                 onDone.invoke()
-                loading.dismiss()
-            } else {
-                UserMessagingPlatform.loadConsentForm(activity, {
-                    it.show(activity) {
-                        if (canShowAd) {
-                            isUserConsent = true
-                            onDone.invoke()
-                            loading.dismiss()
-                        } else {
-                            isUserConsent = false
-                            onDone.invoke()
+                if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing){
+                    loading.dismiss()
+                }
+                return
+            }
+
+            val debugSettings = ConsentDebugSettings.Builder(activity)
+                .setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA)
+                .addTestDeviceHashedId(Utils.getDeviceID(activity)).build()
+
+            val params = ConsentRequestParameters.Builder().setTagForUnderAgeOfConsent(false)
+                .setConsentDebugSettings(if (isTesting) debugSettings else null).build()
+
+            val consentInformation = UserMessagingPlatform.getConsentInformation(activity)
+
+            consentInformation.requestConsentInfoUpdate(activity, params, {
+
+                val canRequestAds = canShowAds(activity)
+
+                if (canRequestAds) {
+                    isUserConsent = true
+                    onDone.invoke()
+                    if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing){
+                        loading.dismiss()
+                    }
+                } else {
+                    UserMessagingPlatform.loadConsentForm(activity, {
+                        it.show(activity) {
+                            if (canShowAd) {
+                                isUserConsent = true
+                                onDone.invoke()
+                                if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing){
+                                    loading.dismiss()
+                                }
+                            } else {
+                                isUserConsent = false
+                                onDone.invoke()
+                                if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing){
+                                    loading.dismiss()
+                                }
+                            }
+                        }
+                    }, {
+                        onDone.invoke()
+                        if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing){
                             loading.dismiss()
                         }
-                    }
-                }, {
-                    onDone.invoke()
+                    })
+                }
+            }, { _ ->
+                onDone.invoke()
+                if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing){
                     loading.dismiss()
-                })
-            }
-        }, { _ ->
-            onDone.invoke()
-            loading.dismiss()
-        })
+                }
+            })
+        }
     }
 
 
