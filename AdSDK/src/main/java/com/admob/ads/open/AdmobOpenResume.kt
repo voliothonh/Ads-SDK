@@ -12,6 +12,8 @@ object AdmobOpenResume {
 
     internal lateinit var adUnitId: String
 
+    fun isAdUnitIdInit () = ::adUnitId.isInitialized
+
     private var appOpenAd: AppOpenAd? = null
     private var mCallback: TAdCallback? = null
     private var isAppOpenAdShowing = false

@@ -24,7 +24,7 @@ fun logAdClicked(adType: AdType, adID: String? = null) {
 
             val adFormat = when (adType) {
                 AdType.OpenApp -> {
-                    if (adID != null && adID == AdmobOpenResume.adUnitId) {
+                    if (adID != null && AdmobOpenResume.isAdUnitIdInit() && adID == AdmobOpenResume.adUnitId) {
                         "ad_open_ads_resume"
                     } else {
                         "ad_open_ads"
