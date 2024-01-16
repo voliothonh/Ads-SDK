@@ -22,10 +22,9 @@ object GDPRUtils {
         get() = canShowAds(AdsSDK.app)
 
 
-    fun showCMP(activity: AppCompatActivity) {
+    fun showCMP(activity: AppCompatActivity, isTesting: Boolean) {
         if (activity.lifecycle.currentState == Lifecycle.State.RESUMED) {
             val loading = DialogShowLoadingFormConsent(activity)
-
             activity.lifecycle.addObserver(object : DefaultLifecycleObserver {
                 override fun onDestroy(owner: LifecycleOwner) {
                     super.onDestroy(owner)
@@ -36,14 +35,39 @@ object GDPRUtils {
             })
 
             loading.show()
-            UserMessagingPlatform.loadConsentForm(activity, {
-                it.show(activity) {
-                    if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing){
+
+            val debugSettings = ConsentDebugSettings.Builder(activity)
+                .setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA)
+                .addTestDeviceHashedId(Utils.getDeviceID(activity)).build()
+
+            val params = ConsentRequestParameters.Builder().setTagForUnderAgeOfConsent(false)
+                .setConsentDebugSettings(if (isTesting) debugSettings else null).build()
+
+            val consentInformation = UserMessagingPlatform.getConsentInformation(activity)
+
+            consentInformation.requestConsentInfoUpdate(activity, params, {
+
+                UserMessagingPlatform.loadConsentForm(activity, {
+                    it.show(activity) {
+                        if (canShowAd) {
+                            isUserConsent = true
+                            if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing) {
+                                loading.dismiss()
+                            }
+                        } else {
+                            isUserConsent = false
+                            if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing) {
+                                loading.dismiss()
+                            }
+                        }
+                    }
+                }, {
+                    if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing) {
                         loading.dismiss()
                     }
-                }
-            }, {
-                if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing){
+                })
+            }, { _ ->
+                if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing) {
                     loading.dismiss()
                 }
             })
@@ -54,8 +78,6 @@ object GDPRUtils {
     fun showCMP(activity: AppCompatActivity, isTesting: Boolean = false, onDone: () -> Unit) {
         if (activity.lifecycle.currentState == Lifecycle.State.RESUMED) {
             val loading = DialogShowLoadingFormConsent(activity)
-
-
             activity.lifecycle.addObserver(object : DefaultLifecycleObserver {
                 override fun onDestroy(owner: LifecycleOwner) {
                     super.onDestroy(owner)
@@ -70,7 +92,7 @@ object GDPRUtils {
             if (!isGDPR(activity.application)) {
                 isUserConsent = true
                 onDone.invoke()
-                if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing){
+                if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing) {
                     loading.dismiss()
                 }
                 return
@@ -92,7 +114,7 @@ object GDPRUtils {
                 if (canRequestAds) {
                     isUserConsent = true
                     onDone.invoke()
-                    if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing){
+                    if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing) {
                         loading.dismiss()
                     }
                 } else {
@@ -101,27 +123,27 @@ object GDPRUtils {
                             if (canShowAd) {
                                 isUserConsent = true
                                 onDone.invoke()
-                                if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing){
+                                if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing) {
                                     loading.dismiss()
                                 }
                             } else {
                                 isUserConsent = false
                                 onDone.invoke()
-                                if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing){
+                                if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing) {
                                     loading.dismiss()
                                 }
                             }
                         }
                     }, {
                         onDone.invoke()
-                        if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing){
+                        if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing) {
                             loading.dismiss()
                         }
                     })
                 }
             }, { _ ->
                 onDone.invoke()
-                if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing){
+                if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing) {
                     loading.dismiss()
                 }
             })
