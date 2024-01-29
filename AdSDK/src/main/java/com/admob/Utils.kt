@@ -36,6 +36,7 @@ import com.bytedance.sdk.openadsdk.activity.TTInterstitialActivity
 import com.bytedance.sdk.openadsdk.activity.TTInterstitialExpressActivity
 import com.bytedance.sdk.openadsdk.activity.TTRewardExpressVideoActivity
 import com.bytedance.sdk.openadsdk.activity.TTRewardVideoActivity
+import com.facebook.ads.AudienceNetworkActivity
 import com.google.android.gms.ads.AdActivity
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdValue
@@ -294,6 +295,7 @@ fun AdsSDK.topActivityIsAd() : Boolean {
             || top is TTRewardVideoActivity
             || top is TTFullScreenVideoActivity
             || top is TTBaseActivity
+            || top is AudienceNetworkActivity
 
 }
 
