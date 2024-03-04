@@ -3,16 +3,18 @@ package com.admob.ads.open
 import com.admob.AdType
 import com.admob.TAdCallback
 import com.admob.ads.AdsSDK
+import com.admob.delay
 import com.admob.getActivityOnTop
 import com.admob.getClazzOnTop
 import com.admob.topActivityIsAd
+import com.admob.waitingResumeNoDelay
 import com.google.android.gms.ads.appopen.AppOpenAd
 
 object AdmobOpenResume {
 
     internal lateinit var adUnitId: String
 
-    fun isAdUnitIdInit () = ::adUnitId.isInitialized
+    fun isAdUnitIdInit() = ::adUnitId.isInitialized
 
     private var appOpenAd: AppOpenAd? = null
     private var mCallback: TAdCallback? = null
@@ -78,6 +80,7 @@ object AdmobOpenResume {
         }
 
         appOpenAd?.let { appOpenAd ->
+            activity.waitingResumeNoDelay {
                 AdmobOpen.show(
                     appOpenAd,
                     callback = object : TAdCallback {
@@ -88,7 +91,7 @@ object AdmobOpenResume {
                         }
 
                         override fun onAdFailedToShowFullScreenContent(
-                            error : String,
+                            error: String,
                             adUnit: String,
                             adType: AdType
                         ) {
@@ -111,7 +114,7 @@ object AdmobOpenResume {
                         }
                     }
                 )
-
+            }
         }
     }
 }
