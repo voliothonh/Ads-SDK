@@ -202,14 +202,20 @@ object AdsSDK {
 
     private val applicationStateObserver = object : DefaultLifecycleObserver {
 
-        override fun onResume(owner: LifecycleOwner) {
-            super.onResume(owner)
+
+        override fun onStart(owner: LifecycleOwner) {
+            super.onStart(owner)
             if (preventShowResumeAd) {
                 preventShowResumeAd = false
                 return
             }
             AdmobInterResume.onInterAppResume()
             AdmobOpenResume.onOpenAdAppResume()
+        }
+
+        override fun onResume(owner: LifecycleOwner) {
+            super.onResume(owner)
+
         }
 
         override fun onStop(owner: LifecycleOwner) {
