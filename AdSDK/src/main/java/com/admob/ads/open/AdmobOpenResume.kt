@@ -1,5 +1,7 @@
 package com.admob.ads.open
 
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import com.admob.AdType
 import com.admob.TAdCallback
 import com.admob.ads.AdsSDK

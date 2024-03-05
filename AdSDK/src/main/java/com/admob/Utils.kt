@@ -2,6 +2,7 @@ package com.admob
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.content.Context.CONNECTIVITY_SERVICE
 import android.content.res.Resources
@@ -20,11 +21,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.navigation.fragment.NavHostFragment
 import com.adcolony.sdk.AdColonyAdViewActivity
 import com.adcolony.sdk.AdColonyInterstitialActivity
 import com.admob.ads.AdsSDK
 import com.admob.ads.databinding.AdLoadingViewBinding
+import com.admob.ads.interstitial.AdmobInterResume
 import com.admob.ads.open.AdmobOpenResume
 import com.appsflyer.adrevenue.AppsFlyerAdRevenue
 import com.appsflyer.adrevenue.adnetworks.generic.MediationNetwork
@@ -169,7 +172,7 @@ fun Activity.waitingResume(block: () -> Unit) {
 fun Activity.waitingResumeNoDelay(block: () -> Unit) {
     if (this is AppCompatActivity) {
         if (lifecycle.currentState == Lifecycle.State.RESUMED) {
-            delay(0) { block.invoke() }
+            delay(20) { block.invoke() }
             return
         }
 
@@ -180,23 +183,37 @@ fun Activity.waitingResumeNoDelay(block: () -> Unit) {
                 lifecycle.removeObserver(this)
             }
 
-//            override fun onPause(owner: LifecycleOwner) {
-//                super.onPause(owner)
-//                lifecycle.removeObserver(this)
-//                lifecycle.addObserver(this)
-//            }
-
             override fun onResume(owner: LifecycleOwner) {
                 super.onResume(owner)
                 lifecycle.removeObserver(this)
-                delay(0) {
+                delay(20) {
                     block.invoke()
                 }
             }
         })
         return
     }
-//    block.invoke()
+}
+
+fun Application.waitToResume(block: () -> Unit){
+
+    val applicationStateObserver = object : DefaultLifecycleObserver {
+
+
+        override fun onStart(owner: LifecycleOwner) {
+            super.onStart(owner)
+
+        }
+
+        override fun onResume(owner: LifecycleOwner) {
+            super.onResume(owner)
+            block.invoke()
+            ProcessLifecycleOwner.get().lifecycle.removeObserver(this)
+        }
+    }
+
+    ProcessLifecycleOwner.get().lifecycle.addObserver(applicationStateObserver)
+
 }
 
 fun Activity.avoidShowWhenResume(block: () -> Unit) {

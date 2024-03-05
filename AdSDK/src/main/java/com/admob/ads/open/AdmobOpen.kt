@@ -76,8 +76,8 @@ object AdmobOpen {
 
             override fun onAdFailedToShowFullScreenContent(adError: AdError) {
                 AdsSDK.adCallback.onAdFailedToShowFullScreenContent(
-                    appOpenAd.adUnitId,
                     adError.message,
+                    appOpenAd.adUnitId,
                     AdType.OpenApp
                 )
                 callback?.onAdFailedToShowFullScreenContent(appOpenAd.adUnitId, adError.message, AdType.OpenApp)
