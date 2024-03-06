@@ -258,7 +258,7 @@ object AdmobBanner {
                 }
                 banners[adView.adUnitId]?.let {
                     if (bannerType == BannerAdSize.BannerCollapsibleTop || bannerType == BannerAdSize.BannerCollapsibleBottom) {
-                        it.destroy()
+//                        it.destroy()
                     }
                 }
                 banners[adView.adUnitId] = adView
