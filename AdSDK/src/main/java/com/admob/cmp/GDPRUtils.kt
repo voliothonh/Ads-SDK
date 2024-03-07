@@ -76,25 +76,10 @@ object GDPRUtils {
 
 
     fun showCMP(activity: AppCompatActivity, isTesting: Boolean = false, onDone: () -> Unit) {
-        if (activity.lifecycle.currentState == Lifecycle.State.RESUMED) {
-            val loading = DialogShowLoadingFormConsent(activity)
-            activity.lifecycle.addObserver(object : DefaultLifecycleObserver {
-                override fun onDestroy(owner: LifecycleOwner) {
-                    super.onDestroy(owner)
-                    if (loading.isShowing) {
-                        loading.dismiss()
-                    }
-                }
-            })
 
-
-            loading.show()
             if (!isGDPR(activity.application)) {
                 isUserConsent = true
                 onDone.invoke()
-                if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing) {
-                    loading.dismiss()
-                }
                 return
             }
 
@@ -114,40 +99,24 @@ object GDPRUtils {
                 if (canRequestAds) {
                     isUserConsent = true
                     onDone.invoke()
-                    if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing) {
-                        loading.dismiss()
-                    }
                 } else {
                     UserMessagingPlatform.loadConsentForm(activity, {
                         it.show(activity) {
                             if (canShowAd) {
                                 isUserConsent = true
                                 onDone.invoke()
-                                if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing) {
-                                    loading.dismiss()
-                                }
                             } else {
                                 isUserConsent = false
                                 onDone.invoke()
-                                if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing) {
-                                    loading.dismiss()
-                                }
                             }
                         }
                     }, {
                         onDone.invoke()
-                        if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing) {
-                            loading.dismiss()
-                        }
                     })
                 }
             }, { _ ->
                 onDone.invoke()
-                if (activity.lifecycle.currentState == Lifecycle.State.RESUMED && loading.isShowing) {
-                    loading.dismiss()
-                }
             })
-        }
     }
 
 
