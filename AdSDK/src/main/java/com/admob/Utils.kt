@@ -44,6 +44,7 @@ import com.google.android.gms.ads.AdActivity
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdValue
 import com.google.android.gms.ads.ResponseInfo
+import java.io.InputStream
 import java.util.Currency
 import java.util.Locale
 
@@ -439,4 +440,17 @@ fun getNetwork(): String {
 
         else -> return "?"
     }
+}
+
+
+fun getStringAssetFile(path: String, application: Application): String? {
+    var json: String? = null
+    try {
+        val inputStream: InputStream = application.assets.open(path)
+        json = inputStream.bufferedReader().use { it.readText() }
+    } catch (ex: Exception) {
+        ex.printStackTrace()
+        return ""
+    }
+    return json
 }

@@ -48,15 +48,15 @@ object AdmobInterResume {
 
         val dialog = DialogWelcomeBackAds(activity) {
             if (AdmobInter.checkShowInterCondition(adUnitId, true)) {
-                AdmobInter.show(
-                    adUnitId = adUnitId,
-                    showLoadingInter = false,
-                    forceShow = true,
-                    loadAfterDismiss = true,
-                    loadIfNotAvailable = true,
-                    callback = null,
-                    nextAction = nextAction
-                )
+//                AdmobInter.show(
+//                    adUnitId = adUnitId,
+//                    showLoadingInter = false,
+//                    forceShow = true,
+//                    loadAfterDismiss = true,
+//                    loadIfNotAvailable = true,
+//                    callback = null,
+//                    nextAction = nextAction
+//                )
             }
         }
 

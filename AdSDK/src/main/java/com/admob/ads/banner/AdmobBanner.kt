@@ -15,7 +15,9 @@ import com.admob.adaptiveBannerSize
 import com.admob.addLoadingView
 import com.admob.ads.AdsSDK
 import com.admob.ads.AdsSDK.isEnableBanner
+import com.admob.ads.AdsSDK.isPremium
 import com.admob.getPaidTrackingBundle
+import com.admob.isEnable
 import com.admob.isNetworkAvailable
 import com.google.ads.mediation.admob.AdMobAdapter
 import com.google.android.gms.ads.AdListener
@@ -99,13 +101,14 @@ object AdmobBanner {
     private fun show(
         lifecycle: Lifecycle? = null,
         adContainer: ViewGroup,
-        adUnitId: String,
+        space: String,
         bannerType: BannerAdSize,
         forceRefresh: Boolean = false,
         callback: TAdCallback? = null
     ) {
+        val adChild = AdsSDK.getAdChild(space) ?: return
 
-        if (!isEnableBanner) {
+        if (!isEnableBanner || isPremium || (adChild.adsType != "banner") || !AdsSDK.app.isNetworkAvailable() || !adChild.isEnable()) {
             adContainer.removeAllViews()
             adContainer.isVisible = false
             return
@@ -119,7 +122,7 @@ object AdmobBanner {
             return
         }
 
-        val adView = banners[adUnitId]
+        val adView = banners[space]
 
 
         if (adView == null || forceRefresh) {
@@ -131,15 +134,15 @@ object AdmobBanner {
                     AdsSDK.app
 
             AdView(context).let {
-                it.adUnitId = adUnitId
+                it.adUnitId = adChild.adsId
                 it.setAdSize(adSize)
                 it.setAdCallback(it, bannerType, callback) {
                     addExistBanner(lifecycle, adContainer, it)
                 }
                 it.loadAd(getAdRequest(bannerType))
 
-                AdsSDK.adCallback.onAdStartLoading(adUnitId, AdType.Banner)
-                callback?.onAdStartLoading(adUnitId, AdType.Banner)
+                AdsSDK.adCallback.onAdStartLoading(adChild.adsId, AdType.Banner)
+                callback?.onAdStartLoading(adChild.adsId, AdType.Banner)
             }
         }
 

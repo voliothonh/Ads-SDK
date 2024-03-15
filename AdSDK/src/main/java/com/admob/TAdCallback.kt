@@ -2,6 +2,7 @@ package com.admob
 
 import android.os.Bundle
 import com.google.android.gms.ads.LoadAdError
+import com.google.gson.annotations.SerializedName
 
 interface TAdCallback {
     fun onAdStartLoading(adUnit: String, adType: AdType) {}
@@ -22,3 +23,38 @@ interface TAdCallback {
 enum class AdType {
     OpenApp, Inter, Banner, Native, Rewarded
 }
+
+data class AdData(
+    val adUnitId: String,
+    val adType: String,
+    val adSpace: String,
+)
+
+class AdsChild {
+    @SerializedName("spaceName")
+    var spaceName:String = "null"
+
+    @SerializedName("adsType")
+    var adsType:String = "null"
+
+    @SerializedName("id")
+    var adsId:String = "null"
+
+    @SerializedName("isEnable")
+    var isEnable : String = "enable"
+
+    override fun toString(): String {
+        return "AdsChild spaceName='$spaceName', adsType='$adsType', adsId='$adsId' ,$isEnable )"
+    }
+}
+
+class Ads {
+    @SerializedName("listAds")
+    var listAdsChild:ArrayList<AdsChild> = ArrayList()
+    override fun toString(): String {
+        return "Ads(listAdsChild=$listAdsChild)"
+    }
+
+}
+
+fun AdsChild.isEnable() = this.isEnable == "enable"

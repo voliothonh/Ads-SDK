@@ -5,6 +5,8 @@ import com.admob.AdType
 import com.admob.TAdCallback
 import com.admob.ads.AdsSDK
 import com.admob.getAppCompatActivityOnTop
+import com.admob.isEnable
+import com.admob.isNetworkAvailable
 import com.admob.onNextActionWhenResume
 import com.admob.waitActivityResumed
 import com.google.android.gms.ads.LoadAdError
@@ -20,12 +22,19 @@ object AdmobInterSplash {
      * @param nextAction
      */
     fun show(
-        adUnitId: String,
+        space: String,
         timeout: Long,
         nextAction: () -> Unit
     ) {
 
-        if (!AdsSDK.isEnableInter) {
+        val adChild = AdsSDK.getAdChild(space)
+
+        if (adChild == null){
+            nextAction.invoke()
+            return
+        }
+
+        if (!AdsSDK.isEnableInter || AdsSDK.isPremium || (adChild.adsType != "inter_splash") || !AdsSDK.app.isNetworkAvailable() || !adChild.isEnable()) {
             nextAction.invoke()
             return
         }
@@ -48,7 +57,7 @@ object AdmobInterSplash {
             }
         }
 
-        AdmobInter.load(adUnitId, callback)
+        AdmobInter.load(adChild.adsId, callback)
 
         timer?.cancel()
         timer = object : CountDownTimer(timeout, 1000) {
@@ -60,12 +69,12 @@ object AdmobInterSplash {
                     return
                 }
 
-                if (AdmobInter.checkShowInterCondition(adUnitId, false)) {
+                if (AdmobInter.checkShowInterCondition(adChild.spaceName, false)) {
                     timer?.cancel()
                     onNextActionWhenResume {
                         AdsSDK.getAppCompatActivityOnTop()?.waitActivityResumed {
                             AdmobInter.show(
-                                adUnitId = adUnitId,
+                                space = space,
                                 showLoadingInter = false,
                                 forceShow = true,
                                 loadAfterDismiss = false,

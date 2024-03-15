@@ -5,6 +5,8 @@ import com.admob.TAdCallback
 import com.admob.ads.AdsSDK
 import com.admob.getActivityOnTop
 import com.admob.getPaidTrackingBundle
+import com.admob.isEnable
+import com.admob.isNetworkAvailable
 import com.admob.logAdImpression
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
@@ -17,33 +19,45 @@ object AdmobOpen {
     private const val TAG = "AdmobOpenAds"
 
     internal fun load(
-        adUnitId: String,
+        space: String,
         callback: TAdCallback? = null,
         onAdLoadFailure : () -> Unit = {},
         onAdLoaded: (appOpenAd: AppOpenAd) -> Unit = {},
     ) {
+        val adChild = AdsSDK.getAdChild(space)
+        if (adChild == null){
+            onAdLoadFailure.invoke()
+            return
+        }
 
-        AdsSDK.adCallback.onAdStartLoading(adUnitId, AdType.OpenApp)
-        callback?.onAdStartLoading(adUnitId, AdType.OpenApp)
+        if (!AdsSDK.app.isNetworkAvailable() || AdsSDK.isPremium  || (adChild.adsType != "open_app") || !adChild.isEnable()) {
+            onAdLoadFailure.invoke()
+            return
+        }
+
+
+
+        AdsSDK.adCallback.onAdStartLoading(adChild.adsId, AdType.OpenApp)
+        callback?.onAdStartLoading(adChild.adsId, AdType.OpenApp)
 
         AppOpenAd.load(
             AdsSDK.app,
-            adUnitId,
+            adChild.adsId,
             AdRequest.Builder().build(),
             object : AppOpenAd.AppOpenAdLoadCallback() {
                 override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                    AdsSDK.adCallback.onAdFailedToLoad(adUnitId, AdType.OpenApp, loadAdError)
-                    callback?.onAdFailedToLoad(adUnitId, AdType.OpenApp, loadAdError)
+                    AdsSDK.adCallback.onAdFailedToLoad(adChild.adsId, AdType.OpenApp, loadAdError)
+                    callback?.onAdFailedToLoad(adChild.adsId, AdType.OpenApp, loadAdError)
                     onAdLoadFailure.invoke()
                 }
 
                 override fun onAdLoaded(appOpenAd: AppOpenAd) {
                     super.onAdLoaded(appOpenAd)
-                    AdsSDK.adCallback.onAdLoaded(adUnitId, AdType.OpenApp)
-                    callback?.onAdLoaded(adUnitId, AdType.OpenApp)
+                    AdsSDK.adCallback.onAdLoaded(adChild.adsId, AdType.OpenApp)
+                    callback?.onAdLoaded(adChild.adsId, AdType.OpenApp)
                     onAdLoaded.invoke(appOpenAd)
                     appOpenAd.setOnPaidEventListener { adValue ->
-                        val bundle = getPaidTrackingBundle(adValue, adUnitId, "OpenApp", appOpenAd.responseInfo)
+                        val bundle = getPaidTrackingBundle(adValue, adChild.adsId, "OpenApp", appOpenAd.responseInfo)
                         AdsSDK.adCallback.onPaidValueListener(bundle)
                         callback?.onPaidValueListener(bundle)
                     }

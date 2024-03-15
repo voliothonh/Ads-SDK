@@ -8,6 +8,7 @@ import com.admob.ads.AdsSDK
 import com.admob.delay
 import com.admob.getActivityOnTop
 import com.admob.getClazzOnTop
+import com.admob.isEnable
 import com.admob.topActivityIsAd
 import com.admob.waitingResumeNoDelay
 import com.google.android.gms.ads.appopen.AppOpenAd
@@ -15,6 +16,7 @@ import com.google.android.gms.ads.appopen.AppOpenAd
 object AdmobOpenResume {
 
     internal lateinit var adUnitId: String
+    internal lateinit var spaceName: String
 
     fun isAdUnitIdInit() = ::adUnitId.isInitialized
 
@@ -23,12 +25,17 @@ object AdmobOpenResume {
     private var isAppOpenAdShowing = false
     private var isAppOpenAdLoading = false
 
-    fun load(id: String, callback: TAdCallback? = null) {
-        adUnitId = id
+    fun load(space: String, callback: TAdCallback? = null) {
+
+        val adChild = AdsSDK.getAdChild(space) ?: return
+
+        adUnitId = adChild.adsId
+        spaceName = space
+
         mCallback = callback
         isAppOpenAdLoading = true
         AdmobOpen.load(
-            adUnitId,
+            spaceName,
             mCallback,
             onAdLoadFailure = {
                 isAppOpenAdLoading = false
@@ -56,7 +63,7 @@ object AdmobOpenResume {
 
         if (appOpenAd == null && !isAppOpenAdLoading) {
             AdmobOpen.load(
-                adUnitId,
+                spaceName,
                 onAdLoadFailure = {
                     isAppOpenAdLoading = false
                     appOpenAd = null
@@ -80,6 +87,8 @@ object AdmobOpenResume {
         if (clazzOnTop == null || containClazzOnTop || adActivityOnTop) {
             return
         }
+
+        if (AdsSDK.getAdChild(spaceName)?.isEnable() == false) return
 
         appOpenAd?.let { appOpenAd ->
             activity.waitingResumeNoDelay {
@@ -112,7 +121,7 @@ object AdmobOpenResume {
                             isAppOpenAdShowing = false
                             AdmobOpenResume.appOpenAd = null
                             isAppOpenAdLoading = false
-                            load(adUnitId, callback = mCallback)
+                            load(spaceName, callback = mCallback)
                         }
                     }
                 )

@@ -15,6 +15,7 @@ import com.admob.ads.AdsSDK
 import com.admob.ads.R
 import com.admob.ads.databinding.AdLoadingViewBinding
 import com.admob.getPaidTrackingBundle
+import com.admob.isEnable
 import com.admob.isNetworkAvailable
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdLoader
@@ -30,7 +31,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 object AdmobNative {
 
     interface INativeLoadCallback {
-        fun forNativeAd(adUnitId: String, nativeAd: NativeAd) {}
+        fun forNativeAd(space: String, nativeAd: NativeAd) {}
     }
 
     private const val TAG = "AdmobNative"
@@ -49,20 +50,21 @@ object AdmobNative {
 
     /**
      * @param adContainer: ViewGroup contain this Native
-     * @param adUnitId AdId
      * @param nativeContentLayoutId LayoutRes for Native
      * @param forceRefresh always load new ad then fill to ViewGroup
      * @param callback callback
      */
     fun show(
         adContainer: ViewGroup,
-        adUnitId: String,
+        space: String,
         @LayoutRes nativeContentLayoutId: Int,
         forceRefresh: Boolean = false,
         callback: TAdCallback? = null
     ) {
 
-        if (!AdsSDK.isEnableNative) {
+        val adChild = AdsSDK.getAdChild(space) ?: return
+
+        if (!AdsSDK.isEnableNative || AdsSDK.isPremium || (adChild.adsType != "native") || !AdsSDK.app.isNetworkAvailable() || !adChild.isEnable()) {
             adContainer.removeAllViews()
             adContainer.isVisible = false
             return
@@ -74,19 +76,19 @@ object AdmobNative {
             return
         }
 
-        val nativeAd = natives[adUnitId]
+        val nativeAd = natives[space]
 
-        val nativeIsStillLoading = nativesLoading.contains(adUnitId)
+        val nativeIsStillLoading = nativesLoading.contains(space)
 
         // Native vẫn tiếp tục loading
         if (nativeIsStillLoading) {
-            nativesLoading[adUnitId] = object : INativeLoadCallback {
-                override fun forNativeAd(adUnitId: String, nativeAd: NativeAd) {
+            nativesLoading[space] = object : INativeLoadCallback {
+                override fun forNativeAd(space: String, nativeAd: NativeAd) {
                     fillNative(
                         adContainer,
                         nativeAd,
                         nativeContentLayoutId,
-                        adUnitId,
+                        space,
                         callback
                     )
                 }
@@ -94,13 +96,13 @@ object AdmobNative {
         } else {
             // Native đang ko loading và (đang null hoặc forceRefresh) thì load lại quảng cáo
             if (nativeAd == null) {
-                load(adUnitId, callback, object : INativeLoadCallback {
-                    override fun forNativeAd(adUnitId: String, nativeAd: NativeAd) {
+                load(space, callback, object : INativeLoadCallback {
+                    override fun forNativeAd(space: String, nativeAd: NativeAd) {
                         fillNative(
                             adContainer,
                             nativeAd,
                             nativeContentLayoutId,
-                            adUnitId,
+                            space,
                             callback
                         )
                     }
@@ -111,19 +113,19 @@ object AdmobNative {
                     adContainer,
                     nativeAd,
                     nativeContentLayoutId,
-                    adUnitId,
+                    space,
                     callback
                 )
 
                 // Nếu forceRefresh thì load quảng cáo mới
                 if (forceRefresh) {
-                    load(adUnitId, callback, object : INativeLoadCallback {
-                        override fun forNativeAd(adUnitId: String, nativeAd: NativeAd) {
+                    load(space, callback, object : INativeLoadCallback {
+                        override fun forNativeAd(space: String, nativeAd: NativeAd) {
                             fillNative(
                                 adContainer,
                                 nativeAd,
                                 nativeContentLayoutId,
-                                adUnitId,
+                                space,
                                 callback
                             )
                         }
@@ -133,57 +135,132 @@ object AdmobNative {
         }
     }
 
+
+//    private fun load(
+//        adUnitId: String,
+//        callback: TAdCallback? = null,
+//        nativeLoadCallback: INativeLoadCallback = object : INativeLoadCallback {}
+//    ) {
+//
+//        if (!AdsSDK.app.isNetworkAvailable()) {
+//            return
+//        }
+//
+//        val adLoader = AdLoader.Builder(AdsSDK.app, adUnitId)
+//            .forNativeAd { ad: NativeAd ->
+//                natives[adUnitId]?.destroy()
+//                natives[adUnitId] = ad
+//                nativesLoading[adUnitId]?.forNativeAd(adUnitId, ad)
+//
+//            }
+//            .withAdListener(object : AdListener() {
+//                override fun onAdFailedToLoad(adError: LoadAdError) {
+//                    AdsSDK.adCallback.onAdFailedToLoad(adUnitId, AdType.Native, adError)
+//                    callback?.onAdFailedToLoad(adUnitId, AdType.Native, adError)
+//                    nativesLoading.remove(adUnitId)
+//                    natives[adUnitId] = null
+//                    runCatching { Throwable(adError.message) }
+//                }
+//
+//                override fun onAdClicked() {
+//                    AdsSDK.adCallback.onAdClicked(adUnitId, AdType.Native)
+//                    callback?.onAdClicked(adUnitId, AdType.Native)
+//                }
+//
+//                override fun onAdClosed() {
+//                    AdsSDK.adCallback.onAdClosed(adUnitId, AdType.Native)
+//                    callback?.onAdClosed(adUnitId, AdType.Native)
+//                }
+//
+//
+//                override fun onAdImpression() {
+//                    AdsSDK.adCallback.onAdImpression(adUnitId, AdType.Native)
+//                    callback?.onAdImpression(adUnitId, AdType.Native)
+//                }
+//
+//                override fun onAdLoaded() {
+//                    AdsSDK.adCallback.onAdLoaded(adUnitId, AdType.Native)
+//                    callback?.onAdLoaded(adUnitId, AdType.Native)
+//                    nativesLoading.remove(adUnitId)
+//                }
+//
+//                override fun onAdOpened() {
+//                    AdsSDK.adCallback.onAdOpened(adUnitId, AdType.Native)
+//                    callback?.onAdOpened(adUnitId, AdType.Native)
+//                }
+//
+//            })
+//            .withNativeAdOptions(
+//                NativeAdOptions.Builder()
+//                    .setVideoOptions(VideoOptions.Builder().setStartMuted(true).build())
+//                    .build()
+//            )
+//            .build()
+//        nativesLoading[adUnitId] = nativeLoadCallback
+//        adLoader.loadAd(AdRequest.Builder().build())
+//
+//        AdsSDK.adCallback.onAdStartLoading(adUnitId, AdType.Native)
+//        callback?.onAdStartLoading(adUnitId, AdType.Native)
+//    }
+
     private fun load(
-        adUnitId: String,
+        space: String,
         callback: TAdCallback? = null,
         nativeLoadCallback: INativeLoadCallback = object : INativeLoadCallback {}
     ) {
+
+        val adChild = AdsSDK.getAdChild(space) ?: return
 
         if (!AdsSDK.app.isNetworkAvailable()) {
             return
         }
 
-        val adLoader = AdLoader.Builder(AdsSDK.app, adUnitId)
+        if (adChild.adsType != "native") return
+
+        if (!adChild.isEnable()) return
+
+
+        val adLoader = AdLoader.Builder(AdsSDK.app, adChild.adsId)
             .forNativeAd { ad: NativeAd ->
-                natives[adUnitId]?.destroy()
-                natives[adUnitId] = ad
-                nativesLoading[adUnitId]?.forNativeAd(adUnitId, ad)
+                natives[space]?.destroy()
+                natives[space] = ad
+                nativesLoading[space]?.forNativeAd(space, ad)
 
             }
             .withAdListener(object : AdListener() {
                 override fun onAdFailedToLoad(adError: LoadAdError) {
-                    AdsSDK.adCallback.onAdFailedToLoad(adUnitId, AdType.Native, adError)
-                    callback?.onAdFailedToLoad(adUnitId, AdType.Native, adError)
-                    nativesLoading.remove(adUnitId)
-                    natives[adUnitId] = null
+                    AdsSDK.adCallback.onAdFailedToLoad(adChild.adsId, AdType.Native, adError)
+                    callback?.onAdFailedToLoad(adChild.adsId, AdType.Native, adError)
+                    nativesLoading.remove(space)
+                    natives[space] = null
                     runCatching { Throwable(adError.message) }
                 }
 
                 override fun onAdClicked() {
-                    AdsSDK.adCallback.onAdClicked(adUnitId, AdType.Native)
-                    callback?.onAdClicked(adUnitId, AdType.Native)
+                    AdsSDK.adCallback.onAdClicked(adChild.adsId, AdType.Native)
+                    callback?.onAdClicked(adChild.adsId, AdType.Native)
                 }
 
                 override fun onAdClosed() {
-                    AdsSDK.adCallback.onAdClosed(adUnitId, AdType.Native)
-                    callback?.onAdClosed(adUnitId, AdType.Native)
+                    AdsSDK.adCallback.onAdClosed(adChild.adsId, AdType.Native)
+                    callback?.onAdClosed(adChild.adsId, AdType.Native)
                 }
 
 
                 override fun onAdImpression() {
-                    AdsSDK.adCallback.onAdImpression(adUnitId, AdType.Native)
-                    callback?.onAdImpression(adUnitId, AdType.Native)
+                    AdsSDK.adCallback.onAdImpression(adChild.adsId, AdType.Native)
+                    callback?.onAdImpression(adChild.adsId, AdType.Native)
                 }
 
                 override fun onAdLoaded() {
-                    AdsSDK.adCallback.onAdLoaded(adUnitId, AdType.Native)
-                    callback?.onAdLoaded(adUnitId, AdType.Native)
-                    nativesLoading.remove(adUnitId)
+                    AdsSDK.adCallback.onAdLoaded(adChild.adsId, AdType.Native)
+                    callback?.onAdLoaded(adChild.adsId, AdType.Native)
+                    nativesLoading.remove(space)
                 }
 
                 override fun onAdOpened() {
-                    AdsSDK.adCallback.onAdOpened(adUnitId, AdType.Native)
-                    callback?.onAdOpened(adUnitId, AdType.Native)
+                    AdsSDK.adCallback.onAdOpened(adChild.adsId, AdType.Native)
+                    callback?.onAdOpened(adChild.adsId, AdType.Native)
                 }
 
             })
@@ -193,23 +270,26 @@ object AdmobNative {
                     .build()
             )
             .build()
-        nativesLoading[adUnitId] = nativeLoadCallback
+        nativesLoading[space] = nativeLoadCallback
         adLoader.loadAd(AdRequest.Builder().build())
 
-        AdsSDK.adCallback.onAdStartLoading(adUnitId, AdType.Native)
-        callback?.onAdStartLoading(adUnitId, AdType.Native)
+        AdsSDK.adCallback.onAdStartLoading(adChild.adsId, AdType.Native)
+        callback?.onAdStartLoading(adChild.adsId, AdType.Native)
     }
 
     private fun fillNative(
         viewGroup: ViewGroup,
         nativeAd: NativeAd,
         @LayoutRes nativeContentLayoutId: Int,
-        adUnitId: String,
+        space: String,
         callback: TAdCallback?
     ) {
+        val adUnitId = AdsSDK.getAdChild(space)?.adsId ?: return
+
         try {
             nativeAd.setOnPaidEventListener { adValue ->
-                val bundle = getPaidTrackingBundle(adValue, adUnitId, "Native", nativeAd.responseInfo)
+                val bundle =
+                    getPaidTrackingBundle(adValue, adUnitId, "Native", nativeAd.responseInfo)
                 AdsSDK.adCallback.onPaidValueListener(bundle)
                 callback?.onPaidValueListener(bundle)
             }
@@ -229,7 +309,7 @@ object AdmobNative {
             }
 
             try {
-                if (nativeAd.responseInfo?.adapterResponses?.find { it.adapterClassName == "com.google.ads.mediation.facebook.FacebookMediationAdapter" } != null){
+                if (nativeAd.responseInfo?.adapterResponses?.find { it.adapterClassName == "com.google.ads.mediation.facebook.FacebookMediationAdapter" } != null) {
                     contentNativeView.isSaveEnabled = false
                     contentNativeView.isSaveFromParentEnabled = false
 
@@ -248,7 +328,7 @@ object AdmobNative {
             populateUnifiedNativeAdView(nativeAd, unifiedNativeAdView)
             viewGroup.addView(unifiedNativeAdView)
 
-            nativeWithViewGroup[adUnitId] = viewGroup
+            nativeWithViewGroup[space] = viewGroup
 
         } catch (e: Exception) {
             e.printStackTrace()

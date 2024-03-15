@@ -86,6 +86,9 @@ dependencies {
 
     api 'com.google.android.ump:user-messaging-platform:2.1.0'
     api 'androidx.preference:preference:1.2.1'
+
+    implementation 'com.google.code.gson:gson:2.10.1'
+
 }
 
 afterEvaluate {

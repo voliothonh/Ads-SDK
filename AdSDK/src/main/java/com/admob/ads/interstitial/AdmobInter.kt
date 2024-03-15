@@ -9,6 +9,7 @@ import com.admob.delay
 import com.admob.getActivityOnTop
 import com.admob.getAppCompatActivityOnTop
 import com.admob.getPaidTrackingBundle
+import com.admob.isEnable
 import com.admob.isNetworkAvailable
 import com.admob.ui.dialogs.DialogShowLoadingAds
 import com.admob.waitActivityResumed
@@ -42,50 +43,52 @@ object AdmobInter {
      * Step2: Có sẵn quảng cáo => Không load
      * Step3: Đang loading rồi => Không load
      */
-    fun load(adUnitId: String, callback: TAdCallback? = null) {
+    fun load(space: String, callback: TAdCallback? = null) {
+
+        val adChild = AdsSDK.getAdChild(space) ?: return
 
         if (!AdsSDK.isEnableInter) {
             return
         }
 
-        if (!AdsSDK.app.isNetworkAvailable()) {
+        if (!AdsSDK.app.isNetworkAvailable()|| AdsSDK.isPremium || (adChild.adsType != "interstitial") || !AdsSDK.app.isNetworkAvailable() || !adChild.isEnable()) {
             return
         }
 
-        if (inters[adUnitId] != null) {
+        if (inters[space] != null) {
             return
         }
 
-        if (intersLoading.contains(adUnitId)) {
+        if (intersLoading.contains(space)) {
             return
         }
 
-        intersLoading.add(adUnitId)
+        intersLoading.add(space)
 
-        AdsSDK.adCallback.onAdStartLoading(adUnitId, AdType.Inter)
-        callback?.onAdStartLoading(adUnitId, AdType.Inter)
+        AdsSDK.adCallback.onAdStartLoading(adChild.adsId, AdType.Inter)
+        callback?.onAdStartLoading(adChild.adsId, AdType.Inter)
 
         InterstitialAd.load(AdsSDK.app,
-            adUnitId,
+            adChild.adsId,
             AdRequest.Builder().build(),
             object : InterstitialAdLoadCallback() {
                 override fun onAdFailedToLoad(error: LoadAdError) {
-                    AdsSDK.adCallback.onAdFailedToLoad(adUnitId, AdType.Inter, error)
-                    callback?.onAdFailedToLoad(adUnitId, AdType.Inter, error)
-                    intersLoading.remove(adUnitId)
+                    AdsSDK.adCallback.onAdFailedToLoad(adChild.adsId, AdType.Inter, error)
+                    callback?.onAdFailedToLoad(adChild.adsId, AdType.Inter, error)
+                    intersLoading.remove(space)
                 }
 
                 override fun onAdLoaded(interstitialAd: InterstitialAd) {
-                    AdsSDK.adCallback.onAdLoaded(adUnitId, AdType.Inter)
-                    callback?.onAdLoaded(adUnitId, AdType.Inter)
-                    intersLoading.remove(adUnitId)
-                    inters[adUnitId] = interstitialAd
+                    AdsSDK.adCallback.onAdLoaded(adChild.adsId, AdType.Inter)
+                    callback?.onAdLoaded(adChild.adsId, AdType.Inter)
+                    intersLoading.remove(space)
+                    inters[space] = interstitialAd
                 }
             })
     }
 
 
-    fun checkShowInterCondition(adUnitId: String, isForceShow: Boolean): Boolean {
+    fun checkShowInterCondition(space: String, isForceShow: Boolean): Boolean {
         if (!AdsSDK.app.isNetworkAvailable()) {
             return false
         }
@@ -94,11 +97,11 @@ object AdmobInter {
             return false
         }
 
-        if (inters[adUnitId] == null) {
+        if (inters[space] == null) {
             return false
         }
 
-        if (!checkTimeShowValid(adUnitId, isForceShow)) {
+        if (!checkTimeShowValid(space, isForceShow)) {
             return false
         }
 
@@ -125,7 +128,7 @@ object AdmobInter {
      *
      */
     fun show(
-        adUnitId: String,
+        space: String,
         showLoadingInter: Boolean = true,
         forceShow: Boolean = false,
         nextActionBeforeDismiss: Boolean = true,
@@ -140,6 +143,16 @@ object AdmobInter {
             nextAction.invoke()
             return
         }
+        val adChild = AdsSDK.getAdChild(space)
+        if (adChild == null){
+            nextAction.invoke()
+            return
+        }
+
+        if (!AdsSDK.app.isNetworkAvailable() || AdsSDK.isPremium  || (adChild.adsType != "interstitial") || !AdsSDK.app.isNetworkAvailable() || !adChild.isEnable()) {
+            nextAction.invoke()
+            return
+        }
 
         // Không có mạng => Không show
         if (!AdsSDK.app.isNetworkAvailable()) {
@@ -147,18 +160,18 @@ object AdmobInter {
             return
         }
 
-        val interAd = inters[adUnitId]
+        val interAd = inters[space]
         val currActivity = AdsSDK.getActivityOnTop()
 
         if (interAd == null) {
             nextAction.invoke()
-            if (loadIfNotAvailable && !intersLoading.contains(adUnitId)) {
-                load(adUnitId, callback)
+            if (loadIfNotAvailable && !intersLoading.contains(space)) {
+                load(space, callback)
             }
             return
         }
 
-        if (!checkTimeShowValid(adUnitId, forceShow)) {
+        if (!checkTimeShowValid(space, forceShow)) {
             nextAction.invoke()
             return
         }
@@ -169,6 +182,7 @@ object AdmobInter {
             if (showLoadingInter) {
                 showLoadingBeforeInter {
                     invokeShowInter(
+                        space,
                         interAd,
                         currActivity,
                         loadAfterDismiss,
@@ -180,6 +194,7 @@ object AdmobInter {
                 }
             } else {
                 invokeShowInter(
+                    space,
                     interAd,
                     currActivity,
                     loadAfterDismiss,
@@ -210,6 +225,7 @@ object AdmobInter {
     }
 
     private fun invokeShowInter(
+        space: String,
         interstitialAd: InterstitialAd,
         activity: Activity,
         loadAfterDismiss: Boolean,
@@ -235,30 +251,30 @@ object AdmobInter {
                 AdsSDK.adCallback.onAdDismissedFullScreenContent(adUnitId, AdType.Inter)
                 callback?.onAdDismissedFullScreenContent(adUnitId, AdType.Inter)
 
-                interTimeShown[adUnitId] = System.currentTimeMillis()
+                interTimeShown[space] = System.currentTimeMillis()
 
                 if (!nextActionBeforeDismiss) {
                     nextAction.invoke()
                 }
 
                 if (loadAfterDismiss) {
-                    load(adUnitId, callback)
+                    load(space, callback)
                 }
             }
 
             override fun onAdFailedToShowFullScreenContent(adError: AdError) {
                 AdsSDK.adCallback.onAdDismissedFullScreenContent(adUnitId, AdType.Inter)
                 callback?.onAdDismissedFullScreenContent(adUnitId, AdType.Inter)
-                inters.remove(adUnitId)
+                inters.remove(space)
                 if (loadAfterDismiss) {
-                    load(adUnitId, callback)
+                    load(space, callback)
                 }
             }
 
             override fun onAdImpression() {
                 AdsSDK.adCallback.onAdImpression(adUnitId, AdType.Inter)
                 callback?.onAdImpression(adUnitId, AdType.Inter)
-                inters.remove(adUnitId)
+                inters.remove(space)
             }
 
             override fun onAdShowedFullScreenContent() {

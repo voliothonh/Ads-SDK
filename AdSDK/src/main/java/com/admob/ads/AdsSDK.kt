@@ -10,6 +10,8 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.admob.ActivityActivityLifecycleCallbacks
 import com.admob.AdType
+import com.admob.Ads
+import com.admob.AdsChild
 import com.admob.TAdCallback
 import com.admob.adLogger
 import com.admob.ads.banner.AdmobBanner
@@ -17,6 +19,7 @@ import com.admob.ads.interstitial.AdmobInterResume
 import com.admob.ads.nativead.AdmobNative
 import com.admob.ads.open.AdmobOpenResume
 import com.admob.delay
+import com.admob.getStringAssetFile
 import com.admob.logAdClicked
 import com.admob.logAdError
 import com.admob.logParams
@@ -30,6 +33,10 @@ import com.google.android.gms.ads.AdActivity
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
+import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
+import com.google.gson.Gson
 
 object AdsSDK {
 
@@ -50,6 +57,9 @@ object AdsSDK {
     var isEnableRewarded = true
         private set
 
+    var isPremium = false
+        private set
+
     private var autoLogPaidValueTrackingInSdk = false
 
 
@@ -60,6 +70,9 @@ object AdsSDK {
 
 
     internal var isEnableAppsflyer = false
+
+    private var gson = Gson()
+
 
     /**
      * Mark loading time
@@ -110,7 +123,11 @@ object AdsSDK {
             adLogger(adType, adUnit, "onAdShowedFullScreenContent")
         }
 
-        override fun onAdFailedToShowFullScreenContent(error: String, adUnit: String, adType: AdType) {
+        override fun onAdFailedToShowFullScreenContent(
+            error: String,
+            adUnit: String,
+            adType: AdType
+        ) {
             super.onAdFailedToShowFullScreenContent(error, adUnit, adType)
             outsideAdCallback?.onAdFailedToShowFullScreenContent(error, adUnit, adType)
             adLogger(adType, adUnit, "onAdFailedToShowFullScreenContent")
@@ -240,7 +257,7 @@ object AdsSDK {
         }
     }
 
-    fun init(application: Application): AdsSDK {
+    fun init(application: Application, path: String, keyConfigAds: String): AdsSDK {
         app = application
         ProcessLifecycleOwner.get().lifecycle.addObserver(applicationStateObserver)
         application.registerActivityLifecycleCallbacks(activityLifecycleCallbacks)
@@ -250,8 +267,57 @@ object AdsSDK {
             AudienceNetworkAds.initialize(application)
         }
 
+        getData(path,keyConfigAds)
         return this
     }
+
+
+    private val listAds = mutableListOf<AdsChild>()
+    private fun getData(path: String, keyConfigAds: String) {
+        try {
+            val data = getStringAssetFile(path, app)
+            val ads = gson.fromJson<Ads>(data, Ads::class.java)
+            listAds.clear()
+            listAds.addAll(ads.listAdsChild)
+            listAds.forEach {
+                Log.e("DucLH-----", it.toString())
+            }
+        } catch (e: Exception) {
+            Log.e("DucLH-", "no load data json ads file")
+        }
+        getRemoteConfig(keyConfigAds)
+    }
+
+    private fun getRemoteConfig(keyConfigAds: String) {
+        Firebase.remoteConfig.apply {
+            setConfigSettingsAsync(remoteConfigSettings { minimumFetchIntervalInSeconds = 0 })
+            fetchAndActivate().addOnCompleteListener {
+                try {
+                    val data = getString(keyConfigAds)
+
+                    if (data.isNullOrBlank()) return@addOnCompleteListener
+
+                    val ads = gson.fromJson<Ads>(data, Ads::class.java)
+                    listAds.clear()
+                    listAds.addAll(ads.listAdsChild)
+                    listAds.forEach {
+                        Log.e("DucLH-----", it.toString())
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
+
+    fun getAdChild(space: String): AdsChild? {
+
+        return listAds.find {
+            it.spaceName == space
+        }
+
+    }
+
 
     fun enableAppsflyer(appsflyerId: String): AdsSDK {
         isEnableAppsflyer = true
@@ -336,6 +402,14 @@ object AdsSDK {
         isEnableRewarded = isEnable
     }
 
+    fun setPremium() {
+        isPremium = true
+        setEnableNative(false)
+        setEnableInter(false)
+        setEnableOpenAds(false)
+        setEnableRewarded(false)
+    }
+
     fun setAutoTrackingPaidValueInSdk(useInSDK: Boolean) {
         autoLogPaidValueTrackingInSdk = useInSDK
     }
@@ -344,11 +418,11 @@ object AdsSDK {
         return AdRequest.Builder().build()
     }
 
-    private fun markAdStartLoading(adUnitId: String){
+    private fun markAdStartLoading(adUnitId: String) {
         adUnitLoadingTime[adUnitId] = Pair(SystemClock.elapsedRealtime(), 0)
     }
 
-    private fun markAdEndLoading(adUnitId: String){
+    private fun markAdEndLoading(adUnitId: String) {
         val pairStartEndTime = adUnitLoadingTime[adUnitId]
         pairStartEndTime ?: return
         val startAdLoadingTime = pairStartEndTime.first
@@ -362,18 +436,18 @@ object AdsSDK {
         val startAdLoadingTime = pairStartEndTime.first
         val endAdLoadingTime = pairStartEndTime.second
 
-        if (startAdLoadingTime  <=0 || endAdLoadingTime <= 0){
+        if (startAdLoadingTime <= 0 || endAdLoadingTime <= 0) {
             return -1
         }
 
-        if (endAdLoadingTime - startAdLoadingTime <=0 ){
+        if (endAdLoadingTime - startAdLoadingTime <= 0) {
             return -1
         }
 
         return endAdLoadingTime - startAdLoadingTime
     }
 
-    internal fun clearMarkLoadingTime(adUnitId : String){
+    internal fun clearMarkLoadingTime(adUnitId: String) {
         adUnitLoadingTime.remove(adUnitId)
     }
 
