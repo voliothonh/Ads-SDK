@@ -15,6 +15,9 @@ import com.admob.adaptiveBannerSize
 import com.admob.addLoadingView
 import com.admob.ads.AdsSDK
 import com.admob.ads.AdsSDK.isEnableBanner
+import com.admob.getActivityOnTop
+import com.admob.getAppCompatActivityOnTop
+import com.admob.getClazzOnTop
 import com.admob.getPaidTrackingBundle
 import com.admob.isNetworkAvailable
 import com.google.ads.mediation.admob.AdMobAdapter
@@ -126,7 +129,7 @@ object AdmobBanner {
 
             val context =
                 if (bannerType == BannerAdSize.BannerCollapsibleBottom || bannerType == BannerAdSize.BannerCollapsibleTop)
-                    adContainer.context
+                    AdsSDK.getAppCompatActivityOnTop() ?: adContainer.context
                 else
                     AdsSDK.app
 
