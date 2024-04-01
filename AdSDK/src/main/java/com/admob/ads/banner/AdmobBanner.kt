@@ -10,6 +10,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.admob.AdType
+import com.admob.Constant
 import com.admob.TAdCallback
 import com.admob.adaptiveBannerSize
 import com.admob.addLoadingView
@@ -111,6 +112,7 @@ object AdmobBanner {
 
         if (!isEnableBanner || isPremium || (adChild.adsType != "banner") || !AdsSDK.app.isNetworkAvailable() || !adChild.isEnable()) {
             adContainer.removeAllViews()
+            callback?.onDisable()
             adContainer.isVisible = false
             return
         }
@@ -135,7 +137,17 @@ object AdmobBanner {
                     AdsSDK.app
 
             AdView(context).let {
-                it.adUnitId = adChild.adsId
+                val id = if (AdsSDK.isDebugging){
+                    if (bannerType == BannerAdSize.BannerCollapsibleBottom || bannerType == BannerAdSize.BannerCollapsibleTop){
+                        Constant.ID_ADMOB_BANNER_COLLAPSIVE_TEST
+                    } else {
+                        Constant.ID_ADMOB_BANNER_TEST
+                    }
+                } else {
+                    adChild.adsId
+                }
+
+                it.adUnitId = id
                 it.setAdSize(adSize)
                 it.setAdCallback(it, bannerType, callback) {
                     addExistBanner(lifecycle, adContainer, it)

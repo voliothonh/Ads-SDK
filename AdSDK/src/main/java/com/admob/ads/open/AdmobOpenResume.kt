@@ -3,6 +3,7 @@ package com.admob.ads.open
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.admob.AdType
+import com.admob.Constant
 import com.admob.TAdCallback
 import com.admob.ads.AdsSDK
 import com.admob.delay
@@ -29,7 +30,7 @@ object AdmobOpenResume {
 
         val adChild = AdsSDK.getAdChild(space) ?: return
 
-        adUnitId = adChild.adsId
+        adUnitId = if (AdsSDK.isDebugging) Constant.ID_ADMOB_OPEN_APP_TEST else adChild.adsId
         spaceName = space
 
         mCallback = callback

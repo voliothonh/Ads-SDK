@@ -3,6 +3,7 @@ package com.admob.ads.interstitial
 import android.app.Activity
 import androidx.lifecycle.Lifecycle
 import com.admob.AdType
+import com.admob.Constant
 import com.admob.TAdCallback
 import com.admob.ads.AdsSDK
 import com.admob.delay
@@ -65,11 +66,13 @@ object AdmobInter {
 
         intersLoading.add(space)
 
+        val id = if (AdsSDK.isDebugging) Constant.ID_ADMOB_INTERSTITIAL_TEST else adChild.adsId
+
         AdsSDK.adCallback.onAdStartLoading(adChild.adsId, AdType.Inter)
         callback?.onAdStartLoading(adChild.adsId, AdType.Inter)
 
         InterstitialAd.load(AdsSDK.app,
-            adChild.adsId,
+            id,
             AdRequest.Builder().build(),
             object : InterstitialAdLoadCallback() {
                 override fun onAdFailedToLoad(error: LoadAdError) {

@@ -10,8 +10,10 @@ import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.core.view.isVisible
 import com.admob.AdType
+import com.admob.Constant
 import com.admob.TAdCallback
 import com.admob.ads.AdsSDK
+import com.admob.ads.BuildConfig
 import com.admob.ads.R
 import com.admob.ads.databinding.AdLoadingViewBinding
 import com.admob.getPaidTrackingBundle
@@ -66,6 +68,7 @@ object AdmobNative {
 
         if (!AdsSDK.isEnableNative || AdsSDK.isPremium || (adChild.adsType != "native") || !AdsSDK.app.isNetworkAvailable() || !adChild.isEnable()) {
             adContainer.removeAllViews()
+            callback?.onDisable()
             adContainer.isVisible = false
             return
         }
@@ -219,8 +222,8 @@ object AdmobNative {
 
         if (!adChild.isEnable()) return
 
-
-        val adLoader = AdLoader.Builder(AdsSDK.app, adChild.adsId)
+        val id = if (AdsSDK.isDebugging) Constant.ID_ADMOB_NATIVE_TEST else adChild.adsId
+        val adLoader = AdLoader.Builder(AdsSDK.app, id)
             .forNativeAd { ad: NativeAd ->
                 natives[space]?.destroy()
                 natives[space] = ad

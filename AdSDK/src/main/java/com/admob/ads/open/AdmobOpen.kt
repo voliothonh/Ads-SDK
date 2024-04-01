@@ -1,6 +1,7 @@
 package com.admob.ads.open
 
 import com.admob.AdType
+import com.admob.Constant
 import com.admob.TAdCallback
 import com.admob.ads.AdsSDK
 import com.admob.getActivityOnTop
@@ -39,10 +40,10 @@ object AdmobOpen {
 
         AdsSDK.adCallback.onAdStartLoading(adChild.adsId, AdType.OpenApp)
         callback?.onAdStartLoading(adChild.adsId, AdType.OpenApp)
-
+        val id = if (AdsSDK.isDebugging) Constant.ID_ADMOB_OPEN_APP_TEST else adChild.adsId
         AppOpenAd.load(
             AdsSDK.app,
-            adChild.adsId,
+            id,
             AdRequest.Builder().build(),
             object : AppOpenAd.AppOpenAdLoadCallback() {
                 override fun onAdFailedToLoad(loadAdError: LoadAdError) {

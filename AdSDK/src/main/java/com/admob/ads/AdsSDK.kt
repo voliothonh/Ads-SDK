@@ -41,6 +41,7 @@ import com.google.gson.Gson
 object AdsSDK {
 
     internal lateinit var app: Application
+    internal  var isDebugging : Boolean = BuildConfig.DEBUG
 
     var isEnableBanner = true
         private set
@@ -257,8 +258,9 @@ object AdsSDK {
         }
     }
 
-    fun init(application: Application, path: String, keyConfigAds: String): AdsSDK {
+    fun init(application: Application, path: String, keyConfigAds: String, isDebug : Boolean = BuildConfig.DEBUG): AdsSDK {
         app = application
+        this.isDebugging = isDebug
         ProcessLifecycleOwner.get().lifecycle.addObserver(applicationStateObserver)
         application.registerActivityLifecycleCallbacks(activityLifecycleCallbacks)
 
