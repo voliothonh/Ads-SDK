@@ -454,3 +454,11 @@ fun getStringAssetFile(path: String, application: Application): String? {
     }
     return json
 }
+
+object AdFormat {
+    val Banner = "banner"
+    val Native = "native"
+    val Interstitial = "interstitial"
+    val Reward = "reward"
+    val Open = "open_app"
+}

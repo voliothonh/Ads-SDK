@@ -1,5 +1,6 @@
 package com.admob.ads.open
 
+import com.admob.AdFormat
 import com.admob.AdType
 import com.admob.Constant
 import com.admob.TAdCallback
@@ -31,7 +32,7 @@ object AdmobOpen {
             return
         }
 
-        if (!AdsSDK.app.isNetworkAvailable() || AdsSDK.isPremium  || (adChild.adsType != "open_app") || !adChild.isEnable()) {
+        if (!AdsSDK.app.isNetworkAvailable() || AdsSDK.isPremium  || (adChild.adsType != AdFormat.Open) || !adChild.isEnable()) {
             onAdLoadFailure.invoke()
             return
         }

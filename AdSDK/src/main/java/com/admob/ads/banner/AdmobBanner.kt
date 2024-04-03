@@ -9,6 +9,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import com.admob.AdFormat
 import com.admob.AdType
 import com.admob.Constant
 import com.admob.TAdCallback
@@ -110,7 +111,7 @@ object AdmobBanner {
     ) {
         val adChild = AdsSDK.getAdChild(space) ?: return
 
-        if (!isEnableBanner || isPremium || (adChild.adsType != "banner") || !AdsSDK.app.isNetworkAvailable() || !adChild.isEnable()) {
+        if (!isEnableBanner || isPremium || (adChild.adsType != AdFormat.Banner) || !AdsSDK.app.isNetworkAvailable() || !adChild.isEnable()) {
             adContainer.removeAllViews()
             callback?.onDisable()
             adContainer.isVisible = false

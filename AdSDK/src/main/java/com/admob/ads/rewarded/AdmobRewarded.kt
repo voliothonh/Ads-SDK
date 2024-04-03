@@ -2,10 +2,13 @@ package com.admob.ads.rewarded
 
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.admob.AdFormat
 import com.admob.AdType
 import com.admob.TAdCallback
 import com.admob.ads.AdsSDK
 import com.admob.getPaidTrackingBundle
+import com.admob.isEnable
+import com.admob.isNetworkAvailable
 import com.admob.ui.dialogs.DialogShowLoadingAds
 import com.admob.waitActivityResumed
 import com.google.android.gms.ads.AdError
@@ -26,17 +29,26 @@ object AdmobRewarded {
      */
     fun show(
         activity: AppCompatActivity,
-        adUnitId: String,
+        space: String,
         isShowDefaultLoadingDialog: Boolean = true,
         callBack: TAdCallback? = null,
         onFailureUserNotEarn: () -> Unit = {},
         onUserEarnedReward: () -> Unit
     ) {
 
+        val adChild = AdsSDK.getAdChild(space) ?: return
+        val  adUnitId = adChild.adsId
+
         if (!AdsSDK.isEnableRewarded){
             onUserEarnedReward.invoke()
             return
         }
+
+        if (!AdsSDK.app.isNetworkAvailable() || AdsSDK.isPremium  || (adChild.adsType != AdFormat.Reward) || !AdsSDK.app.isNetworkAvailable() || !adChild.isEnable()) {
+            onUserEarnedReward.invoke()
+            return
+        }
+
 
         var dialog : DialogShowLoadingAds? = null
 

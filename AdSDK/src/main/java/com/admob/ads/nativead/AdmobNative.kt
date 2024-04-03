@@ -9,6 +9,7 @@ import android.widget.RatingBar
 import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.core.view.isVisible
+import com.admob.AdFormat
 import com.admob.AdType
 import com.admob.Constant
 import com.admob.TAdCallback
@@ -66,7 +67,7 @@ object AdmobNative {
 
         val adChild = AdsSDK.getAdChild(space) ?: return
 
-        if (!AdsSDK.isEnableNative || AdsSDK.isPremium || (adChild.adsType != "native") || !AdsSDK.app.isNetworkAvailable() || !adChild.isEnable()) {
+        if (!AdsSDK.isEnableNative || AdsSDK.isPremium || (adChild.adsType != AdFormat.Native) || !AdsSDK.app.isNetworkAvailable() || !adChild.isEnable()) {
             adContainer.removeAllViews()
             callback?.onDisable()
             adContainer.isVisible = false
@@ -218,7 +219,7 @@ object AdmobNative {
             return
         }
 
-        if (adChild.adsType != "native") return
+        if (adChild.adsType != AdFormat.Native) return
 
         if (!adChild.isEnable()) return
 

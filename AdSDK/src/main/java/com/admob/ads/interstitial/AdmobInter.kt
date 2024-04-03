@@ -2,6 +2,7 @@ package com.admob.ads.interstitial
 
 import android.app.Activity
 import androidx.lifecycle.Lifecycle
+import com.admob.AdFormat
 import com.admob.AdType
 import com.admob.Constant
 import com.admob.TAdCallback
@@ -52,7 +53,7 @@ object AdmobInter {
             return
         }
 
-        if (!AdsSDK.app.isNetworkAvailable()|| AdsSDK.isPremium || (adChild.adsType != "interstitial") || !AdsSDK.app.isNetworkAvailable() || !adChild.isEnable()) {
+        if (!AdsSDK.app.isNetworkAvailable()|| AdsSDK.isPremium || (adChild.adsType != AdFormat.Interstitial) || !AdsSDK.app.isNetworkAvailable() || !adChild.isEnable()) {
             return
         }
 
@@ -152,7 +153,7 @@ object AdmobInter {
             return
         }
 
-        if (!AdsSDK.app.isNetworkAvailable() || AdsSDK.isPremium  || (adChild.adsType != "interstitial") || !AdsSDK.app.isNetworkAvailable() || !adChild.isEnable()) {
+        if (!AdsSDK.app.isNetworkAvailable() || AdsSDK.isPremium  || (adChild.adsType != AdFormat.Interstitial) || !AdsSDK.app.isNetworkAvailable() || !adChild.isEnable()) {
             nextAction.invoke()
             return
         }

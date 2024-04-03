@@ -1,6 +1,8 @@
 package com.admob.ads.interstitial
 
 import android.os.CountDownTimer
+import android.util.Log
+import com.admob.AdFormat
 import com.admob.AdType
 import com.admob.TAdCallback
 import com.admob.ads.AdsSDK
@@ -34,7 +36,7 @@ object AdmobInterSplash {
             return
         }
 
-        if (!AdsSDK.isEnableInter || AdsSDK.isPremium || (adChild.adsType != "inter_splash") || !AdsSDK.app.isNetworkAvailable() || !adChild.isEnable()) {
+        if (!AdsSDK.isEnableInter || AdsSDK.isPremium || (adChild.adsType != AdFormat.Interstitial) || !AdsSDK.app.isNetworkAvailable() || !adChild.isEnable()) {
             nextAction.invoke()
             return
         }
@@ -42,8 +44,15 @@ object AdmobInterSplash {
         val callback = object : TAdCallback {
             override fun onAdFailedToLoad(adUnit: String, adType: AdType, error: LoadAdError) {
                 super.onAdFailedToLoad(adUnit, adType, error)
+                Log.e("DucLH--inter", "Failload: $error $adUnit ${adType.name}")
                 timer?.cancel()
                 onNextActionWhenResume(nextAction)
+            }
+
+            override fun onAdLoaded(adUnit: String, adType: AdType) {
+                super.onAdLoaded(adUnit, adType)
+                Log.e("DucLH--inter", "onAdLoaded: $adUnit ${adType.name}")
+
             }
 
             override fun onAdFailedToShowFullScreenContent(
@@ -52,12 +61,13 @@ object AdmobInterSplash {
                 adType: AdType
             ) {
                 super.onAdFailedToShowFullScreenContent(error, adUnit, adType)
+                Log.e("DucLH--inter", "FailShow: $error $adUnit ${adType.name}")
                 timer?.cancel()
                 onNextActionWhenResume(nextAction)
             }
         }
 
-        AdmobInter.load(adChild.adsId, callback)
+        AdmobInter.load(adChild.spaceName, callback)
 
         timer?.cancel()
         timer = object : CountDownTimer(timeout, 1000) {
