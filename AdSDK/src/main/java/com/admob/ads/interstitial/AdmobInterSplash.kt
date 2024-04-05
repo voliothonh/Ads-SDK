@@ -1,5 +1,6 @@
 package com.admob.ads.interstitial
 
+import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
 import com.admob.AdFormat
@@ -26,6 +27,7 @@ object AdmobInterSplash {
     fun show(
         space: String,
         timeout: Long,
+        showAdCallback: TAdCallback,
         nextAction: () -> Unit
     ) {
 
@@ -87,9 +89,10 @@ object AdmobInterSplash {
                                 space = space,
                                 showLoadingInter = false,
                                 forceShow = true,
+                                nextActionBeforeDismiss = false,
                                 loadAfterDismiss = false,
                                 loadIfNotAvailable = false,
-                                callback = callback,
+                                callback = showAdCallback,
                                 nextAction = nextAction
                             )
                         }
