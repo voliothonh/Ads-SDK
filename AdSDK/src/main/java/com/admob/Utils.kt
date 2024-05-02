@@ -139,8 +139,8 @@ fun getPaidTrackingBundle(
         putString("revenue_micros", "${adValue.valueMicros}")
         putString("currency_code", adValue.currencyCode)
         putString("precision_type", "${adValue.precisionType}")
-        putString("country_code", Locale.getDefault().country)
-        putString("network_type", getNetwork())
+//        putString("country_code", Locale.getDefault().country)
+//        putString("network_type", getNetwork())
 
         val adapterResponseInfo = responseInfo?.loadedAdapterResponseInfo
 
