@@ -208,6 +208,7 @@ object AdmobNative {
         callback: TAdCallback?
     ) {
         try {
+            nativeAd.setOnPaidEventListener(null)
             nativeAd.setOnPaidEventListener { adValue ->
                 val bundle = getPaidTrackingBundle(adValue, adUnitId, "Native", nativeAd.responseInfo)
                 AdsSDK.adCallback.onPaidValueListener(bundle)
