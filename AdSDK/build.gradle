@@ -71,14 +71,18 @@ dependencies {
     api 'com.airbnb.android:lottie:6.0.0'
 
     // mediation
-    implementation 'com.google.ads.mediation:facebook:6.16.0.0'
+    implementation ('com.google.ads.mediation:facebook:6.16.0.0'){
+        exclude group: 'com.google.zxing'
+    }
     implementation 'com.google.ads.mediation:adcolony:4.8.0.2'
     implementation 'com.google.ads.mediation:applovin:11.11.3.0'
     implementation 'com.google.ads.mediation:vungle:7.0.0.0'
     implementation 'com.google.ads.mediation:pangle:5.5.0.4.0'
     implementation 'com.google.ads.mediation:mintegral:16.5.21.0'
 
-    api 'com.facebook.android:facebook-android-sdk:latest.release'
+    api ('com.facebook.android:facebook-android-sdk:latest.release'){
+        exclude group: 'com.google.zxing'
+    }
     api 'com.appsflyer:af-android-sdk:6.12.1'
     api "com.android.installreferrer:installreferrer:2.2"
     api 'com.appsflyer:adrevenue:6.9.0'

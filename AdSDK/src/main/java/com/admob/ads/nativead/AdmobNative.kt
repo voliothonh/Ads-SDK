@@ -291,6 +291,7 @@ object AdmobNative {
         val adUnitId = AdsSDK.getAdChild(space)?.adsId ?: return
 
         try {
+            nativeAd.setOnPaidEventListener(null)
             nativeAd.setOnPaidEventListener { adValue ->
                 val bundle =
                     getPaidTrackingBundle(adValue, adUnitId, "Native", nativeAd.responseInfo)
