@@ -114,7 +114,14 @@ isDebug = false)
  .setAutoTrackingPaidValueInSdk(false)
  ```
 
-
+* Enable/Disable Ad by AdType
+```kotlin
+AdsSDK.setEnableBanner(false)
+AdsSDK.setEnableNative(false)
+AdsSDK.setEnableInter(false)
+AdsSDK.setEnableOpenAds(false)
+AdsSDK.setEnableRewarded(false)
+```
 
 ## 2. Banner
 
@@ -280,5 +287,4 @@ fun show(
     onUserEarnedReward: () -> Unit  
 )
 ```
-
 
