@@ -79,7 +79,7 @@ dependencies {
     implementation 'com.google.ads.mediation:vungle:7.0.0.0'
     implementation 'com.google.ads.mediation:pangle:5.5.0.4.0'
     implementation 'com.google.ads.mediation:mintegral:16.5.21.0'
-
+    implementation 'com.google.ads.mediation:fyber:8.2.7.0'
     api ('com.facebook.android:facebook-android-sdk:latest.release'){
         exclude group: 'com.google.zxing'
     }
