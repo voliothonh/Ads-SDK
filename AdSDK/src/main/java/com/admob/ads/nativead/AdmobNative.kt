@@ -14,7 +14,6 @@ import com.admob.AdType
 import com.admob.Constant
 import com.admob.TAdCallback
 import com.admob.ads.AdsSDK
-import com.admob.ads.BuildConfig
 import com.admob.ads.R
 import com.admob.ads.databinding.AdLoadingViewBinding
 import com.admob.getPaidTrackingBundle
@@ -40,6 +39,7 @@ object AdmobNative {
     private const val TAG = "AdmobNative"
 
     private val natives = mutableMapOf<String, NativeAd?>()
+    private val nativesCallback = mutableMapOf<String, TAdCallback?>()
     private val nativeWithViewGroup = mutableMapOf<String, ViewGroup?>()
     private val nativesLoading = mutableMapOf<String, INativeLoadCallback>()
 
@@ -140,73 +140,6 @@ object AdmobNative {
     }
 
 
-//    private fun load(
-//        adUnitId: String,
-//        callback: TAdCallback? = null,
-//        nativeLoadCallback: INativeLoadCallback = object : INativeLoadCallback {}
-//    ) {
-//
-//        if (!AdsSDK.app.isNetworkAvailable()) {
-//            return
-//        }
-//
-//        val adLoader = AdLoader.Builder(AdsSDK.app, adUnitId)
-//            .forNativeAd { ad: NativeAd ->
-//                natives[adUnitId]?.destroy()
-//                natives[adUnitId] = ad
-//                nativesLoading[adUnitId]?.forNativeAd(adUnitId, ad)
-//
-//            }
-//            .withAdListener(object : AdListener() {
-//                override fun onAdFailedToLoad(adError: LoadAdError) {
-//                    AdsSDK.adCallback.onAdFailedToLoad(adUnitId, AdType.Native, adError)
-//                    callback?.onAdFailedToLoad(adUnitId, AdType.Native, adError)
-//                    nativesLoading.remove(adUnitId)
-//                    natives[adUnitId] = null
-//                    runCatching { Throwable(adError.message) }
-//                }
-//
-//                override fun onAdClicked() {
-//                    AdsSDK.adCallback.onAdClicked(adUnitId, AdType.Native)
-//                    callback?.onAdClicked(adUnitId, AdType.Native)
-//                }
-//
-//                override fun onAdClosed() {
-//                    AdsSDK.adCallback.onAdClosed(adUnitId, AdType.Native)
-//                    callback?.onAdClosed(adUnitId, AdType.Native)
-//                }
-//
-//
-//                override fun onAdImpression() {
-//                    AdsSDK.adCallback.onAdImpression(adUnitId, AdType.Native)
-//                    callback?.onAdImpression(adUnitId, AdType.Native)
-//                }
-//
-//                override fun onAdLoaded() {
-//                    AdsSDK.adCallback.onAdLoaded(adUnitId, AdType.Native)
-//                    callback?.onAdLoaded(adUnitId, AdType.Native)
-//                    nativesLoading.remove(adUnitId)
-//                }
-//
-//                override fun onAdOpened() {
-//                    AdsSDK.adCallback.onAdOpened(adUnitId, AdType.Native)
-//                    callback?.onAdOpened(adUnitId, AdType.Native)
-//                }
-//
-//            })
-//            .withNativeAdOptions(
-//                NativeAdOptions.Builder()
-//                    .setVideoOptions(VideoOptions.Builder().setStartMuted(true).build())
-//                    .build()
-//            )
-//            .build()
-//        nativesLoading[adUnitId] = nativeLoadCallback
-//        adLoader.loadAd(AdRequest.Builder().build())
-//
-//        AdsSDK.adCallback.onAdStartLoading(adUnitId, AdType.Native)
-//        callback?.onAdStartLoading(adUnitId, AdType.Native)
-//    }
-
     private fun load(
         space: String,
         callback: TAdCallback? = null,
@@ -234,7 +167,7 @@ object AdmobNative {
             .withAdListener(object : AdListener() {
                 override fun onAdFailedToLoad(adError: LoadAdError) {
                     AdsSDK.adCallback.onAdFailedToLoad(adChild.adsId, AdType.Native, adError)
-                    callback?.onAdFailedToLoad(adChild.adsId, AdType.Native, adError)
+                    getNativeCallback(space)?.onAdFailedToLoad(adChild.adsId, AdType.Native, adError)
                     nativesLoading.remove(space)
                     natives[space] = null
                     runCatching { Throwable(adError.message) }
@@ -242,29 +175,29 @@ object AdmobNative {
 
                 override fun onAdClicked() {
                     AdsSDK.adCallback.onAdClicked(adChild.adsId, AdType.Native)
-                    callback?.onAdClicked(adChild.adsId, AdType.Native)
+                    getNativeCallback(space)?.onAdClicked(adChild.adsId, AdType.Native)
                 }
 
                 override fun onAdClosed() {
                     AdsSDK.adCallback.onAdClosed(adChild.adsId, AdType.Native)
-                    callback?.onAdClosed(adChild.adsId, AdType.Native)
+                    getNativeCallback(space)?.onAdClosed(adChild.adsId, AdType.Native)
                 }
 
 
                 override fun onAdImpression() {
                     AdsSDK.adCallback.onAdImpression(adChild.adsId, AdType.Native)
-                    callback?.onAdImpression(adChild.adsId, AdType.Native)
+                    getNativeCallback(space)?.onAdImpression(adChild.adsId, AdType.Native)
                 }
 
                 override fun onAdLoaded() {
                     AdsSDK.adCallback.onAdLoaded(adChild.adsId, AdType.Native)
-                    callback?.onAdLoaded(adChild.adsId, AdType.Native)
+                    getNativeCallback(space)?.onAdLoaded(adChild.adsId, AdType.Native)
                     nativesLoading.remove(space)
                 }
 
                 override fun onAdOpened() {
                     AdsSDK.adCallback.onAdOpened(adChild.adsId, AdType.Native)
-                    callback?.onAdOpened(adChild.adsId, AdType.Native)
+                    getNativeCallback(space)?.onAdOpened(adChild.adsId, AdType.Native)
                 }
 
             })
@@ -289,7 +222,7 @@ object AdmobNative {
         callback: TAdCallback?
     ) {
         val adUnitId = AdsSDK.getAdChild(space)?.adsId ?: return
-
+        setNativeCallback(space,callback)
         try {
             nativeAd.setOnPaidEventListener(null)
             nativeAd.setOnPaidEventListener { adValue ->
@@ -518,5 +451,13 @@ object AdmobNative {
                 FirebaseCrashlytics.getInstance().recordException(e)
             }
         }
+    }
+
+    private fun setNativeCallback(space: String, callback: TAdCallback?) {
+        nativesCallback.set(space, callback)
+    }
+
+    private fun getNativeCallback(space: String): TAdCallback? {
+        return nativesCallback.get(space)
     }
 }
