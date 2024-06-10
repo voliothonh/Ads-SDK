@@ -129,6 +129,7 @@ object AdmobBanner {
         val adView = banners[space]
 
         if (adView == null || forceRefresh) {
+            Log.e(TAG, "show: adView = null-${adView == null} and forceRefresh: $forceRefresh ")
 
             val context =
                 if (bannerType == BannerAdSize.BannerCollapsibleBottom || bannerType == BannerAdSize.BannerCollapsibleTop)
@@ -160,6 +161,7 @@ object AdmobBanner {
         }
 
         if (adView != null) {
+            Log.e(TAG, "show: adView != null")
             addExistBanner(lifecycle, adContainer, adView)
             adView.setAdCallback(adView, space, bannerType, callback) {
                 addExistBanner(lifecycle, adContainer, adView)
@@ -304,4 +306,16 @@ object AdmobBanner {
 
     fun getAdsView(space: String): AdView? = banners[space]
 
+    fun destroyAdBySpace(space: String) {
+        kotlin.runCatching {
+            banners[space]?.let { adView ->
+                Log.e(TAG, "destroyAdBySpace: " + space)
+                adView.destroy()
+                (adView.parent as? ViewGroup)?.removeView(adView)
+                banners[space] = null
+            }
+        }.onFailure {
+            FirebaseCrashlytics.getInstance().recordException(it)
+        }
+    }
 }
