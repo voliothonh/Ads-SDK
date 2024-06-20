@@ -84,6 +84,11 @@ dependencies {
     api ('com.facebook.android:facebook-android-sdk:latest.release'){
         exclude group: 'com.google.zxing'
     }
+
+    implementation("com.google.ads.mediation:ironsource:7.5.0.0")
+    implementation("com.unity3d.ads:unity-ads:4.9.2")
+    implementation("com.google.ads.mediation:unity:4.9.2.0")
+
     api 'com.appsflyer:af-android-sdk:6.12.1'
     api "com.android.installreferrer:installreferrer:2.2"
     api 'com.appsflyer:adrevenue:6.9.0'
