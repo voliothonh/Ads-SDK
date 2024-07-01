@@ -29,6 +29,7 @@ import com.admob.ads.AdsSDK
 import com.admob.ads.databinding.AdLoadingViewBinding
 import com.admob.ads.interstitial.AdmobInterResume
 import com.admob.ads.open.AdmobOpenResume
+import com.appsflyer.AppsFlyerLib
 import com.appsflyer.adrevenue.AppsFlyerAdRevenue
 import com.appsflyer.adrevenue.adnetworks.generic.MediationNetwork
 import com.appsflyer.adrevenue.adnetworks.generic.Scheme
@@ -99,7 +100,12 @@ fun pushAppsFlyerAdValueTracking(
 ) {
 
     val value = adValue.valueMicros / 1000000.0
-
+    val context = AdsSDK.app.applicationContext
+    context?.let {
+        AppsFlyerLib.getInstance().logEvent(
+            it, "ad_roas_tiktok", mapOf<String, Double>("af_revenue" to value)
+        )
+    }
     val customParams: MutableMap<String, String> = HashMap()
     customParams[Scheme.AD_UNIT] = adId
     customParams[Scheme.AD_TYPE] = adType

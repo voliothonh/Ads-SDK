@@ -353,15 +353,16 @@ object AdsSDK {
         AppsFlyerLib.getInstance().start(app)
 
         val builder = PurchaseClient.Builder(app, Store.GOOGLE)
-        val afPurchaseClient = builder.build()
-        afPurchaseClient.startObservingTransactions()
+
         builder.logSubscriptions(true)
         builder.autoLogInApps(true)
-
 
         if (BuildConfig.DEBUG) {
             AppsFlyerLib.getInstance().setDebugLog(true)
         }
+
+        val afPurchaseClient = builder.build()
+        afPurchaseClient.startObservingTransactions()
         return this
     }
 
